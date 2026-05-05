@@ -1,0 +1,320 @@
+/* A4 Certificate - 210mm × 297mm */
+.tc-cert {
+  width: 210mm;
+  min-height: 297mm;
+  background: #fff;
+  font-family: 'Times New Roman', Times, serif;
+  padding: 10mm 14mm 10mm 14mm;
+  position: relative;
+  overflow: hidden;
+  box-sizing: border-box;
+  color: #000;
+}
+
+/* ── Right decorative border ── */
+.right-border {
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: 12mm;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-around;
+  overflow: hidden;
+  border-left: 1.5px solid #555;
+  background: #f8f8f8;
+}
+.border-unit {
+  font-size: 11px;
+  color: #555;
+  line-height: 1;
+  transform: rotate(90deg);
+}
+
+/* ── Watermark ── */
+.watermark {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-60%, -50%);
+  z-index: 0;
+  pointer-events: none;
+}
+.watermark-circle {
+  width: 160px;
+  height: 160px;
+  border-radius: 50%;
+  border: 3px solid rgba(0,0,0,0.07);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+.watermark-circle::before {
+  content: '';
+  position: absolute;
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  border: 2px solid rgba(0,0,0,0.05);
+}
+.watermark-text {
+  font-size: 11px;
+  color: rgba(0,0,0,0.07);
+  text-align: center;
+  font-weight: bold;
+  letter-spacing: 1px;
+  padding: 10px;
+  line-height: 1.4;
+}
+
+/* ── Header ── */
+.tc-header {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 4px;
+  position: relative;
+  z-index: 1;
+  padding-right: 14mm;
+}
+.header-logo {
+  flex-shrink: 0;
+  margin-right: 10px;
+  margin-top: 4px;
+}
+.logo-circle {
+  width: 68px;
+  height: 68px;
+  border-radius: 50%;
+  border: 2.5px solid #333;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #fff;
+  position: relative;
+}
+.logo-img {
+  width: 68px;
+  height: 68px;
+  object-fit: contain;
+  border-radius: 50%;
+  border: 2px solid #ccc;
+  background: #fff;
+}
+
+.logo-circle::before {
+  content: '';
+  position: absolute;
+  width: 58px;
+  height: 58px;
+  border-radius: 50%;
+  border: 1.5px solid #555;
+}
+.logo-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.logo-cross {
+  font-size: 18px;
+  color: #333;
+  line-height: 1;
+}
+.logo-text {
+  font-size: 9px;
+  font-weight: bold;
+  color: #333;
+  letter-spacing: 1px;
+  margin-top: 2px;
+}
+.header-text {
+  flex: 1;
+  text-align: center;
+}
+.college-name {
+  font-size: 22px;
+  font-weight: bold;
+  letter-spacing: 0.5px;
+  line-height: 1.2;
+  margin-bottom: 2px;
+}
+.college-sub {
+  font-size: 13px;
+  font-weight: bold;
+  line-height: 1.5;
+}
+.college-addr {
+  font-size: 12.5px;
+  font-weight: bold;
+  line-height: 1.5;
+}
+
+/* ── Title bar ── */
+.tc-title-bar {
+  background: #222;
+  color: #fff;
+  text-align: center;
+  padding: 4px 0;
+  font-size: 13.5px;
+  font-weight: bold;
+  letter-spacing: 2px;
+  margin: 6px 0 6px 0;
+  position: relative;
+  z-index: 1;
+  margin-right: 14mm;
+  border: 1.5px solid #000;
+}
+
+/* ── TC No / ID No row ── */
+.tc-top-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  margin-bottom: 6px;
+  padding-right: 14mm;
+  position: relative;
+  z-index: 1;
+}
+.tc-no { font-size: 13.5px; }
+.id-no { font-size: 13.5px; }
+
+/* ── Main body rows ── */
+.tc-body {
+  position: relative;
+  z-index: 1;
+  padding-right: 14mm;
+}
+
+.tc-row {
+  display: flex;
+  align-items: flex-start;
+  min-height: 22px;
+  margin-bottom: 2px;
+  font-size: 12.5px;
+  line-height: 1.5;
+}
+.tc-row.two-line {
+  min-height: 36px;
+}
+
+.tc-label {
+  width: 195px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: flex-start;
+  padding-top: 1px;
+}
+.tc-num {
+  width: 22px;
+  flex-shrink: 0;
+  font-size: 12.5px;
+}
+.tc-label-text {
+  flex: 1;
+  font-size: 12.5px;
+  line-height: 1.45;
+}
+.sub-label {
+  font-size: 11.5px;
+  font-style: normal;
+}
+
+.tc-colon {
+  width: 10px;
+  flex-shrink: 0;
+  padding-top: 1px;
+  font-size: 12.5px;
+}
+
+.tc-value {
+  flex: 1;
+  padding-top: 1px;
+  min-width: 0;
+}
+
+/* ── Dotted underline value ── */
+.dot-line {
+  display: inline-block;
+  border-bottom: 1.5px dotted #333;
+  min-width: 60px;
+  font-size: 12.5px;
+  padding-bottom: 1px;
+  vertical-align: bottom;
+}
+.dot-line.wide { width: 100%; display: block; }
+.dot-line.short { min-width: 80px; }
+.dot-line.medium { min-width: 120px; }
+
+/* ── Gender checkboxes ── */
+.gender-box {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12.5px;
+  padding-top: 2px;
+}
+.checkbox {
+  display: inline-block;
+  width: 13px;
+  height: 13px;
+  border: 1.5px solid #333;
+  vertical-align: middle;
+  position: relative;
+  background: #fff;
+}
+.checkbox.checked::after {
+  content: '✓';
+  position: absolute;
+  top: -2px;
+  left: 1px;
+  font-size: 11px;
+  color: #000;
+}
+
+/* ── DOB block ── */
+.dob-block {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  width: 100%;
+}
+
+/* ── Footer ── */
+.tc-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-top: 28px;
+  padding-right: 14mm;
+  position: relative;
+  z-index: 1;
+  font-size: 13px;
+}
+.footer-left {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+.footer-right {
+  text-align: center;
+}
+.principal-label {
+  font-size: 13.5px;
+  font-weight: bold;
+  letter-spacing: 1px;
+  margin-top: 40px;
+}
+
+/* Print styles */
+@media print {
+  .tc-cert {
+    width: 210mm;
+    min-height: 297mm;
+    margin: 0;
+    padding: 10mm 14mm 10mm 14mm;
+  }
+  .right-border { display: flex; }
+}
