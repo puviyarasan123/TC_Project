@@ -5,9 +5,34 @@ import { TCFormData, FieldConfig } from '../types/tc';
 import { useCollege } from '../context/CollegeContext';
 import CollegeSelector from '../components/CollegeSelector';
 
+const NATIONALITIES = ['Indian', 'Others'];
+
+const RELIGIONS = ['Hindu', 'Muslim', 'Christian', 'Sikh', 'Buddhist', 'Jain', 'Others'];
+
+const COMMUNITIES: Record<string, string[]> = {
+  Hindu:    ['OC', 'BC', 'BC(M)', 'MBC', 'MBC(V)', 'SC', 'SC(A)', 'ST'],
+  Muslim:   ['BC(M)', 'OC'],
+  Christian:['BC', 'SC', 'SC(A)', 'ST', 'OC'],
+  Sikh:     ['OC'],
+  Buddhist: ['SC', 'OC'],
+  Jain:     ['OC'],
+  Others:   ['OC', 'BC', 'SC', 'ST'],
+};
+
+const CASTES: Record<string, string[]> = {
+  OC:      ['Brahmin', 'Mudaliar', 'Chettiar', 'Naidu', 'Pillai', 'Gounder', 'Others'],
+  BC:      ['Vanniyar', 'Yadav', 'Konar', 'Naicker', 'Vellalar', 'Mudaliar', 'Chettiar', 'Others'],
+  'BC(M)': ['Rowther', 'Lebbai', 'Marakkar', 'Others'],
+  MBC:     ['Vanniyar', 'Naicker', 'Ambalakarar', 'Others'],
+  'MBC(V)':['Vokkaliga', 'Others'],
+  SC:      ['Paraiyar', 'Pallar', 'Chakkiliyar', 'Arunthathiyar', 'Others'],
+  'SC(A)': ['Arunthathiyar', 'Others'],
+  ST:      ['Irula', 'Toda', 'Kota', 'Kurumba', 'Others'],
+};
+
 const initialState: TCFormData = {
   student_name: '', parent_name: '', gender: 'Male',
-  nationality: '', religion: '', community: '', caste: '',
+  nationality: 'Indian', religion: '', community: '', caste: '',
   dob: '', dob_words: '', admission_date: '', study_period: '',
   leaving_date: '', class_at_leaving: '', medium: '',
   promotion_status: '', application_date: '', reason: '',
@@ -15,15 +40,11 @@ const initialState: TCFormData = {
 };
 
 const personalFields: FieldConfig[] = [
-  { name: 'student_name',   label: 'Name of the Student (Block Letters)', full: true },
-  { name: 'parent_name',    label: 'Name of Parent / Guardian',           full: true },
-  { name: 'id_number',      label: 'ID Number' },
-  { name: 'nationality',    label: 'Nationality' },
-  { name: 'religion',       label: 'Religion' },
-  { name: 'community',      label: 'Community' },
-  { name: 'caste',          label: 'Caste' },
-  { name: 'dob',            label: 'Date of Birth (Figures)',             type: 'date' },
-  { name: 'dob_words',      label: 'Date of Birth (Words)',               full: true },
+  { name: 'student_name', label: 'Name of the Student (Block Letters)', full: true },
+  { name: 'parent_name',  label: 'Name of Parent / Guardian',           full: true },
+  { name: 'id_number',    label: 'ID Number' },
+  { name: 'dob',          label: 'Date of Birth (Figures)',             type: 'date' },
+  { name: 'dob_words',    label: 'Date of Birth (Words)',               full: true },
 ];
 
 const academicFields: FieldConfig[] = [
@@ -46,7 +67,13 @@ const TCForm: React.FC = () => {
   const navigate = useNavigate();
 
   const handle = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>): void => {
-    setForm(prev => ({ ...prev, [e.target.name]: e.target.value }));
+    const { name, value } = e.target;
+    setForm(prev => {
+      const updated = { ...prev, [name]: value };
+      if (name === 'religion')  { updated.community = ''; updated.caste = ''; }
+      if (name === 'community') { updated.caste = ''; }
+      return updated;
+    });
   };
 
   const submit = async (e: FormEvent<HTMLFormElement>): Promise<void> => {
@@ -106,6 +133,38 @@ const TCForm: React.FC = () => {
                 <select name="gender" value={form.gender} onChange={handle}>
                   <option>Male</option>
                   <option>Female</option>
+                </select>
+              </div>
+
+              <div className="form-group">
+                <label>Nationality</label>
+                <select name="nationality" value={form.nationality} onChange={handle}>
+                  <option value="">-- Select --</option>
+                  {NATIONALITIES.map(n => <option key={n}>{n}</option>)}
+                </select>
+              </div>
+
+              <div className="form-group">
+                <label>Religion</label>
+                <select name="religion" value={form.religion} onChange={handle}>
+                  <option value="">-- Select --</option>
+                  {RELIGIONS.map(r => <option key={r}>{r}</option>)}
+                </select>
+              </div>
+
+              <div className="form-group">
+                <label>Community</label>
+                <select name="community" value={form.community} onChange={handle} disabled={!form.religion}>
+                  <option value="">-- Select --</option>
+                  {(COMMUNITIES[form.religion] ?? []).map(c => <option key={c}>{c}</option>)}
+                </select>
+              </div>
+
+              <div className="form-group">
+                <label>Caste</label>
+                <select name="caste" value={form.caste} onChange={handle} disabled={!form.community}>
+                  <option value="">-- Select --</option>
+                  {(CASTES[form.community] ?? []).map(c => <option key={c}>{c}</option>)}
                 </select>
               </div>
 
