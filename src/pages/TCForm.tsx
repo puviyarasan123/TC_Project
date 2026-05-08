@@ -5,29 +5,141 @@ import { TCFormData, FieldConfig } from '../types/tc';
 import { useCollege } from '../context/CollegeContext';
 import CollegeSelector from '../components/CollegeSelector';
 
-const NATIONALITIES = ['Indian', 'Others'];
+const NATIONALITIES = [
+  'Indian', 'Afghan', 'Australian', 'Bangladeshi', 'Bhutanese', 'British',
+  'Canadian', 'Chinese', 'French', 'German', 'Indonesian', 'Iranian', 'Iraqi',
+  'Japanese', 'Kenyan', 'Malaysian', 'Maldivian', 'Nepali', 'Nigerian',
+  'Pakistani', 'Russian', 'Saudi Arabian', 'Singaporean', 'Sri Lankan',
+  'Thai', 'Turkish', 'American', 'Others',
+];
 
-const RELIGIONS = ['Hindu', 'Muslim', 'Christian', 'Sikh', 'Buddhist', 'Jain', 'Others'];
+const RELIGIONS = [
+  'Hindu', 'Muslim', 'Christian', 'Sikh', 'Buddhist', 'Jain', 'Zoroastrian', 'Jewish', 'Others',
+];
 
+// Tamil Nadu government community classification
 const COMMUNITIES: Record<string, string[]> = {
-  Hindu:    ['OC', 'BC', 'BC(M)', 'MBC', 'MBC(V)', 'SC', 'SC(A)', 'ST'],
-  Muslim:   ['BC(M)', 'OC'],
-  Christian:['BC', 'SC', 'SC(A)', 'ST', 'OC'],
-  Sikh:     ['OC'],
-  Buddhist: ['SC', 'OC'],
-  Jain:     ['OC'],
-  Others:   ['OC', 'BC', 'SC', 'ST'],
+  Hindu:       ['OC', 'BC', 'BC(M)', 'MBC', 'MBC(V)', 'SC', 'SC(A)', 'ST'],
+  Muslim:      ['BC(M)', 'OC'],
+  Christian:   ['BC(C)', 'SC(C)', 'ST', 'OC'],
+  Sikh:        ['OC'],
+  Buddhist:    ['OC', 'SC'],
+  Jain:        ['OC'],
+  Zoroastrian: ['OC'],
+  Jewish:      ['OC'],
+  Others:      ['OC', 'BC', 'SC', 'ST'],
 };
 
+// Full Tamil Nadu caste list per community (TN govt official list)
 const CASTES: Record<string, string[]> = {
-  OC:      ['Brahmin', 'Mudaliar', 'Chettiar', 'Naidu', 'Pillai', 'Gounder', 'Others'],
-  BC:      ['Vanniyar', 'Yadav', 'Konar', 'Naicker', 'Vellalar', 'Mudaliar', 'Chettiar', 'Others'],
-  'BC(M)': ['Rowther', 'Lebbai', 'Marakkar', 'Others'],
-  MBC:     ['Vanniyar', 'Naicker', 'Ambalakarar', 'Others'],
-  'MBC(V)':['Vokkaliga', 'Others'],
-  SC:      ['Paraiyar', 'Pallar', 'Chakkiliyar', 'Arunthathiyar', 'Others'],
-  'SC(A)': ['Arunthathiyar', 'Others'],
-  ST:      ['Irula', 'Toda', 'Kota', 'Kurumba', 'Others'],
+  OC: [
+    'Brahmin - Iyer', 'Brahmin - Iyengar', 'Brahmin - Others',
+    'Mudaliar', 'Vellalar', 'Pillai', 'Chettiar', 'Naidu', 'Gounder (OC)',
+    'Kamma', 'Reddy', 'Nair', 'Kshatriya', 'Vysya', 'Arya Vysya',
+    'Balija', 'Beri Chettiar', 'Devanga Chettiar', 'Illathu Pillai',
+    'Karkatta Vellalar', 'Kondaikatti Vellalar', 'Mudali', 'Munsiff',
+    'Nattukotai Chettiar', 'Saiva Vellalar', 'Senguntha Mudaliar',
+    'Sozhia Vellalar', 'Thuluva Vellalar', 'Udayar', 'Veerakodi Vellalar',
+    'Others',
+  ],
+  BC: [
+    'Agamudayar', 'Ambalakarar', 'Andipandaram', 'Arayar', 'Bestha',
+    'Bhatraju', 'Boyar', 'Chakkala', 'Chavalakarar', 'Chettiar (BC)',
+    'Devanga', 'Ezhavathy', 'Ezhuthachar', 'Gandla', 'Gavara',
+    'Gounder (BC)', 'Idaiyar', 'Illuvan', 'Jogi', 'Kaikolar',
+    'Kallar', 'Karuneegar', 'Kavarkarar', 'Koli', 'Konar',
+    'Kongu Vellalar', 'Krishnanvaka', 'Kudumbi', 'Kulalar', 'Kumbar',
+    'Kunnuvar', 'Kuravan', 'Kurumbar', 'Mahratta (Non-Brahmin)',
+    'Malayar', 'Mannan', 'Maravars', 'Maravar', 'Meenavar',
+    'Mudaliar (BC)', 'Mukkuvar', 'Muthuraja', 'Naicker (BC)',
+    'Nattaman', 'Oddar', 'Padayachi', 'Pallan (BC)', 'Panan',
+    'Panisaivan', 'Parkavakulam', 'Perike', 'Pillai (BC)',
+    'Rajput', 'Saiva Pillai', 'Sakkaravar', 'Saliyar', 'Senaithalaivar',
+    'Sozhia Naicker', 'Thachar', 'Thigala', 'Thoraiyar', 'Udayar (BC)',
+    'Uppara', 'Urali Gounder', 'Valayar', 'Vannar', 'Vanniyar',
+    'Veduvar', 'Vellan Chettiar', 'Vettuva Gounder', 'Vishwakarma',
+    'Yadavar', 'Others',
+  ],
+  'BC(M)': [
+    'Dekkani Muslim', 'Dudekula', 'Illupapalayam Muslim',
+    'Labbai', 'Lebbai', 'Marakkar', 'Marakkayar',
+    'Memon', 'Nattu Labbai', 'Navayath', 'Pattani',
+    'Rawther', 'Rowther', 'Sheik', 'Syed',
+    'Tamil Muslim', 'Urdu Muslim', 'Others',
+  ],
+  'BC(C)': [
+    'Adi Dravida Christian', 'Anglo Indian', 'Christian Nadar',
+    'Christian Vanniyar', 'Latin Catholic', 'Protestant Christian',
+    'Roman Catholic', 'Others',
+  ],
+  MBC: [
+    'Agamudayar (MBC)', 'Ambalakarar (MBC)', 'Arunthathiyar (MBC)',
+    'Bestha (MBC)', 'Boyar (MBC)', 'Chakkiliyar (MBC)',
+    'Ezhavathy (MBC)', 'Gandla (MBC)', 'Idaiyar (MBC)',
+    'Kallar (MBC)', 'Konar (MBC)', 'Kori',
+    'Kudumbi (MBC)', 'Kulalar (MBC)', 'Kumbar (MBC)',
+    'Kuravan (MBC)', 'Kurumbar (MBC)', 'Maravars (MBC)',
+    'Meenavar (MBC)', 'Mudaliar (MBC)', 'Mukkuvar (MBC)',
+    'Muthuraja (MBC)', 'Naicker (MBC)', 'Nadar',
+    'Oddar (MBC)', 'Padayachi (MBC)', 'Pallan (MBC)',
+    'Panisaivan (MBC)', 'Parkavakulam (MBC)', 'Perike (MBC)',
+    'Saliyar (MBC)', 'Senaithalaivar (MBC)', 'Thachar (MBC)',
+    'Thigala (MBC)', 'Uppara (MBC)', 'Urali Gounder (MBC)',
+    'Valayar (MBC)', 'Vannar (MBC)', 'Vanniyar (MBC)',
+    'Veduvar (MBC)', 'Vishwakarma (MBC)', 'Yadavar (MBC)', 'Others',
+  ],
+  'MBC(V)': [
+    'Vokkaliga', 'Vokkaliga Gowda', 'Others',
+  ],
+  SC: [
+    'Adi Andhra', 'Adi Dravida', 'Adi Karnataka',
+    'Ajila', 'Arunthathiyar', 'Ayyanavar',
+    'Baira', 'Bakuda', 'Bandi',
+    'Bellara', 'Bharatar', 'Chakkiliyan',
+    'Chakkiliyar', 'Chamar', 'Chandala',
+    'Cheruman', 'Devendrakulam', 'Domban',
+    'Godagali', 'Godda', 'Gosangi',
+    'Holeya', 'Jaggali', 'Jambuvulu',
+    'Kadaiyan', 'Kakkalan', 'Kalladi',
+    'Kanakkan', 'Kavara', 'Koliyan',
+    'Koosa', 'Kudumban', 'Kuravan (SC)',
+    'Madari', 'Madiga', 'Maila',
+    'Mala', 'Mannan (SC)', 'Mavilan',
+    'Moger', 'Mundala', 'Nalakeyava',
+    'Nayadi', 'Padannan', 'Pallan',
+    'Palluvan', 'Pambada', 'Panan (SC)',
+    'Panchama', 'Pannadi', 'Panniandi',
+    'Paraiyar', 'Paravan', 'Pathiyan',
+    'Perumannan', 'Pulayan', 'Puthirai Vannan',
+    'Raneyar', 'Samagara', 'Samban',
+    'Sapari', 'Semman', 'Thandan',
+    'Thoti', 'Tiruvalluvar', 'Vallon',
+    'Valluvan', 'Vannan (SC)', 'Vathiriyan',
+    'Velan', 'Vetan', 'Vettiyan',
+    'Others',
+  ],
+  'SC(A)': [
+    'Arunthathiyar', 'Chakkiliyan', 'Chakkiliyar',
+    'Madiga', 'Pagadai', 'Others',
+  ],
+  'SC(C)': [
+    'Adi Dravida Christian', 'Christian Paraiyar',
+    'Christian Pallan', 'Christian Chakkiliyar', 'Others',
+  ],
+  ST: [
+    'Adiyan', 'Arandan', 'Eravallan',
+    'Hill Pulayan', 'Irular', 'Kadar',
+    'Kammara (ST)', 'Kanikaran', 'Kanikar',
+    'Kattunayakan', 'Kochu Velan', 'Konda Kapus',
+    'Kondareddi', 'Koraga', 'Kota',
+    'Kudiya', 'Kurichchan', 'Kurumans',
+    'Kurumba', 'Maha Malasar', 'Malasar',
+    'Malayan', 'Malayekandi', 'Mannan (ST)',
+    'Mavilan (ST)', 'Moopan', 'Mudugar',
+    'Muduvan', 'Muthuvan', 'Palleyan',
+    'Paniyan', 'Sholaga', 'Toda',
+    'Uraly', 'Others',
+  ],
 };
 
 const initialState: TCFormData = {

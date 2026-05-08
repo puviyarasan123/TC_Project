@@ -4,65 +4,67 @@
   min-height: 297mm;
   background: #fff;
   font-family: 'Times New Roman', Times, serif;
-  padding: 10mm 14mm 10mm 14mm;
+  padding: 10mm 16mm 10mm 12mm;
   position: relative;
   overflow: hidden;
   box-sizing: border-box;
   color: #000;
 }
 
-/* ── Right decorative border ── */
+/* ── Right decorative border: two columns of alternating flowers ── */
 .right-border {
   position: absolute;
   right: 0;
   top: 0;
   bottom: 0;
-  width: 12mm;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: space-around;
+  width: 13mm;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-content: space-around;
+  justify-items: center;
   overflow: hidden;
-  border-left: 1.5px solid #555;
-  background: #f8f8f8;
+  border-left: 1.5px solid #444;
+  background: #fff;
+  padding: 6px 1px;
+  box-sizing: border-box;
 }
 .border-unit {
-  font-size: 11px;
-  color: #555;
+  font-size: 12px;
+  color: #444;
   line-height: 1;
-  transform: rotate(90deg);
-}
-
-/* ── Watermark ── */
-.watermark {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-60%, -50%);
-  z-index: 0;
-  pointer-events: none;
-}
-.watermark-circle {
-  width: 160px;
-  height: 160px;
-  border-radius: 50%;
-  border: 3px solid rgba(0,0,0,0.07);
   display: flex;
   align-items: center;
   justify-content: center;
-  position: relative;
+  user-select: none;
 }
-.watermark-circle::before {
-  content: '';
+
+/* ── Watermark: logo image, large, centered, faint ── */
+.watermark {
   position: absolute;
-  width: 140px;
-  height: 140px;
+  top: 52%;
+  left: 46%;
+  transform: translate(-50%, -50%);
+  z-index: 0;
+  pointer-events: none;
+}
+.watermark-img {
+  width: 500px;
+  height: 500px;
+  object-fit: contain;
+  opacity: 0.09;
+}
+.watermark-circle {
+  width: 200px;
+  height: 200px;
   border-radius: 50%;
-  border: 2px solid rgba(0,0,0,0.05);
+  border: 3px solid rgba(0,0,0,0.06);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 .watermark-text {
   font-size: 11px;
-  color: rgba(0,0,0,0.07);
+  color: rgba(0,0,0,0.06);
   text-align: center;
   font-weight: bold;
   letter-spacing: 1px;
@@ -73,63 +75,46 @@
 /* ── Header ── */
 .tc-header {
   display: flex;
-  align-items: flex-start;
-  margin-bottom: 4px;
+  align-items: center;
+  margin-bottom: 5px;
   position: relative;
   z-index: 1;
-  padding-right: 14mm;
 }
 .header-logo {
   flex-shrink: 0;
-  margin-right: 10px;
-  margin-top: 4px;
+  margin-right: 14px;
 }
+/* Raw logo — no border, no radius, natural shape like real TC */
+.logo-img {
+  width: 120px;
+  height:120px;
+  object-fit: contain;
+  display: block;
+}
+/* Fallback only */
 .logo-circle {
-  width: 68px;
-  height: 68px;
+  width: 100px;
+  height: 100px;
   border-radius: 50%;
-  border: 2.5px solid #333;
+  border: 2px solid #333;
   display: flex;
   align-items: center;
   justify-content: center;
   background: #fff;
   position: relative;
 }
-.logo-img {
-  width: 68px;
-  height: 68px;
-  object-fit: contain;
-  border-radius: 50%;
-  border: 2px solid #ccc;
-  background: #fff;
-}
-
 .logo-circle::before {
   content: '';
   position: absolute;
-  width: 58px;
-  height: 58px;
+  width: 73px;
+  height: 73px;
   border-radius: 50%;
   border: 1.5px solid #555;
 }
-.logo-inner {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-}
-.logo-cross {
-  font-size: 18px;
-  color: #333;
-  line-height: 1;
-}
-.logo-text {
-  font-size: 9px;
-  font-weight: bold;
-  color: #333;
-  letter-spacing: 1px;
-  margin-top: 2px;
-}
+.logo-inner { display: flex; flex-direction: column; align-items: center; justify-content: center; }
+.logo-cross  { font-size: 18px; color: #333; line-height: 1; }
+.logo-text   { font-size: 9px; font-weight: bold; color: #333; letter-spacing: 1px; margin-top: 2px; }
+
 .header-text {
   flex: 1;
   text-align: center;
@@ -140,31 +125,26 @@
   letter-spacing: 0.5px;
   line-height: 1.2;
   margin-bottom: 2px;
+  color: #000;
 }
-.college-sub {
-  font-size: 13px;
-  font-weight: bold;
-  line-height: 1.5;
-}
-.college-addr {
-  font-size: 12.5px;
-  font-weight: bold;
-  line-height: 1.5;
-}
+.college-sub  { font-size: 13px;   font-weight: bold; line-height: 1.55; color: #000; }
+.college-addr { font-size: 12.5px; font-weight: bold; line-height: 1.55; color: #000; }
 
-/* ── Title bar ── */
+/* ── Title bar: black bg, white text, centered/inline not full width ── */
 .tc-title-bar {
-  background: #222;
-  color: #fff;
   text-align: center;
-  padding: 4px 0;
-  font-size: 13.5px;
-  font-weight: bold;
-  letter-spacing: 2px;
-  margin: 6px 0 6px 0;
+  margin: 8px 0 10px 0;
   position: relative;
   z-index: 1;
-  margin-right: 14mm;
+}
+.tc-title-bar span {
+  display: inline-block;
+  background: #111;
+  color: #fff;
+  padding: 4px 28px;
+  font-size: 13px;
+  font-weight: bold;
+  letter-spacing: 2px;
   border: 1.5px solid #000;
 }
 
@@ -172,55 +152,39 @@
 .tc-top-row {
   display: flex;
   justify-content: space-between;
-  font-size: 13px;
-  margin-bottom: 6px;
-  padding-right: 14mm;
+  font-size: 13.5px;
+  margin-top: 8px;
+  margin-bottom: 18px;
   position: relative;
   z-index: 1;
 }
-.tc-no { font-size: 13.5px; }
-.id-no { font-size: 13.5px; }
 
 /* ── Main body rows ── */
 .tc-body {
   position: relative;
   z-index: 1;
-  padding-right: 14mm;
 }
 
 .tc-row {
   display: flex;
   align-items: flex-start;
-  min-height: 22px;
-  margin-bottom: 2px;
-  font-size: 12.5px;
-  line-height: 1.5;
-}
-.tc-row.two-line {
   min-height: 36px;
+  margin-bottom: 7px;
+  font-size: 12.5px;
+  line-height: 1.6;
 }
+.tc-row.two-line { min-height: 54px; }
 
 .tc-label {
-  width: 195px;
+  width: 200px;
   flex-shrink: 0;
   display: flex;
   align-items: flex-start;
   padding-top: 1px;
 }
-.tc-num {
-  width: 22px;
-  flex-shrink: 0;
-  font-size: 12.5px;
-}
-.tc-label-text {
-  flex: 1;
-  font-size: 12.5px;
-  line-height: 1.45;
-}
-.sub-label {
-  font-size: 11.5px;
-  font-style: normal;
-}
+.tc-num        { width: 24px; flex-shrink: 0; font-size: 12.5px; }
+.tc-label-text { flex: 1; font-size: 12.5px; line-height: 1.45; }
+.sub-label     { font-size: 11.5px; }
 
 .tc-colon {
   width: 10px;
@@ -235,7 +199,7 @@
   min-width: 0;
 }
 
-/* ── Dotted underline value ── */
+/* ── Dotted underline ── */
 .dot-line {
   display: inline-block;
   border-bottom: 1.5px dotted #333;
@@ -244,15 +208,15 @@
   padding-bottom: 1px;
   vertical-align: bottom;
 }
-.dot-line.wide { width: 100%; display: block; }
-.dot-line.short { min-width: 80px; }
+.dot-line.wide   { width: 100%; display: block; }
+.dot-line.short  { min-width: 80px; }
 .dot-line.medium { min-width: 120px; }
 
 /* ── Gender checkboxes ── */
 .gender-box {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 6px;
   font-size: 12.5px;
   padding-top: 2px;
 }
@@ -278,7 +242,7 @@
 .dob-block {
   display: flex;
   flex-direction: column;
-  gap: 3px;
+  gap: 4px;
   width: 100%;
 }
 
@@ -287,8 +251,7 @@
   display: flex;
   justify-content: space-between;
   align-items: flex-end;
-  margin-top: 28px;
-  padding-right: 14mm;
+  margin-top: 40px;
   position: relative;
   z-index: 1;
   font-size: 13px;
@@ -296,25 +259,21 @@
 .footer-left {
   display: flex;
   flex-direction: column;
-  gap: 0;
+  gap: 18px;
 }
-.footer-right {
-  text-align: center;
-}
+.footer-right { text-align: center; }
 .principal-label {
   font-size: 13.5px;
   font-weight: bold;
   letter-spacing: 1px;
-  margin-top: 40px;
+  margin-top: 44px;
 }
 
-/* Print styles */
 @media print {
   .tc-cert {
     width: 210mm;
     min-height: 297mm;
     margin: 0;
-    padding: 10mm 14mm 10mm 14mm;
+    padding: 10mm 16mm 10mm 12mm;
   }
-  .right-border { display: flex; }
 }

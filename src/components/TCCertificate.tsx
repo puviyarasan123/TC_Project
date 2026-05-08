@@ -39,25 +39,26 @@ const TCCertificate = forwardRef<HTMLDivElement, TCCertificateProps>(({ data, co
   return (
     <div className="tc-cert" ref={ref}>
 
-      {/* Decorative right border */}
+      {/* Decorative right border - alternating floral pattern */}
       <div className="right-border">
-        {Array.from({ length: 40 }).map((_, i) => (
-          <div key={i} className="border-unit">❧</div>
+        {Array.from({ length: 80 }).map((_, i) => (
+          <div key={i} className="border-unit">{i % 2 === 0 ? '✿' : '❀'}</div>
         ))}
       </div>
 
-      {/* Watermark */}
+      {/* Watermark: same logo, large, centered, very faint */}
       <div className="watermark">
-        <div className="watermark-circle">
-          <span className="watermark-text">{collegeName}</span>
-        </div>
+        {logoUrl
+          ? <img src={logoUrl} alt="" className="watermark-img" crossOrigin="anonymous" />
+          : <div className="watermark-circle"><span className="watermark-text">{collegeName}</span></div>
+        }
       </div>
 
       {/* Header */}
       <div className="tc-header">
         <div className="header-logo">
           {logoUrl
-            ? <img src={logoUrl} alt="college logo" className="logo-img" />
+            ? <img src={logoUrl} alt="college logo" className="logo-img" crossOrigin="anonymous" />
             : (
               <div className="logo-circle">
                 <div className="logo-inner">
@@ -122,7 +123,7 @@ const TCCertificate = forwardRef<HTMLDivElement, TCCertificateProps>(({ data, co
       <div className="tc-footer">
         <div className="footer-left">
           <div>Place : <span className="dot-line medium" /></div>
-          <div style={{ marginTop: 14 }}>Date : <span className="dot-line medium" /></div>
+          <div>Date : <span className="dot-line medium" /></div>
         </div>
         <div className="footer-right">
           <div className="principal-label">PRINCIPAL</div>
