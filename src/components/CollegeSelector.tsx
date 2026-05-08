@@ -1,6 +1,5 @@
 import React, { useState, useRef, ChangeEvent } from 'react';
 import { useCollege } from '../context/CollegeContext';
-import { CollegeData } from '../types/tc';
 import { createCollege } from '../lib/college';
 import './CollegeSelector.css';
 
