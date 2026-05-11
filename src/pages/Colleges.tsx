@@ -130,7 +130,7 @@ const Colleges: React.FC = () => {
 
       {/* Add / Edit Modal */}
       {showForm && (
-        <div className="modal-overlay" onClick={closeForm}>
+        <div className="modal-overlay">
           <div className="modal-box" onClick={e => e.stopPropagation()}>
             <div className="modal-head">
               <h3>{editing ? `Edit — ${editing.name}` : 'Add New College'}</h3>

@@ -1,4 +1,4 @@
-import React, { useEffect, useState, ChangeEvent } from 'react';
+import React, { useEffect, useState, useRef, ChangeEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
@@ -178,8 +178,8 @@ const Records: React.FC = () => {
 
       {/* Edit Modal */}
       {editing && (
-        <div className="modal-overlay" onClick={() => setEditing(null)}>
-          <div className="modal-box" onClick={e => e.stopPropagation()}>
+        <div className="modal-overlay">
+          <div className="modal-box">
             <div className="modal-head">
               <h3>Edit TC — {editing.tc_number}</h3>
               <button className="modal-close" onClick={() => setEditing(null)}>✕</button>
