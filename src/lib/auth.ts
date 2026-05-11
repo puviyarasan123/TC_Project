@@ -58,9 +58,8 @@ export async function createUser(
   });
 
   // 3. Send password reset email so user sets their own password
-  //    This uses Supabase's built-in email (works on free tier)
   const { error: resetErr } = await supabaseAdmin.auth.resetPasswordForEmail(email, {
-    redirectTo: `${window.location.origin}/reset-password`,
+    redirectTo: `${getAppUrl()}/reset-password`,
   });
   if (resetErr) throw resetErr;
 }
@@ -68,9 +67,14 @@ export async function createUser(
 // Admin: resend password reset email
 export async function resendPassword(email: string): Promise<void> {
   const { error } = await supabaseAdmin.auth.resetPasswordForEmail(email, {
-    redirectTo: `${window.location.origin}/reset-password`,
+    redirectTo: `${getAppUrl()}/reset-password`,
   });
   if (error) throw error;
+}
+
+function getAppUrl(): string {
+  // Use env var if set (for production), otherwise fall back to current origin
+  return process.env.REACT_APP_SITE_URL?.replace(/\/$/, '') || window.location.origin;
 }
 
 // Admin: delete user
