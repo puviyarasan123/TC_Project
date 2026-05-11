@@ -42,6 +42,17 @@ export async function getTCById(id: number): Promise<TCRecord> {
   return data as TCRecord;
 }
 
+export async function updateTC(id: number, data: Partial<TCFormData>): Promise<TCRecord> {
+  const { data: row, error } = await supabase
+    .from('tc_records')
+    .update(data)
+    .eq('id', id)
+    .select()
+    .single();
+  if (error) throw new Error(error.message);
+  return row as TCRecord;
+}
+
 export async function deleteTC(id: number): Promise<void> {
   const { error } = await supabase.from('tc_records').delete().eq('id', id);
   if (error) throw new Error(error.message);

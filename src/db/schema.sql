@@ -36,9 +36,58 @@ CREATE TABLE IF NOT EXISTS tc_records (
   created_at       TIMESTAMP DEFAULT NOW()
 );
 
--- Enable Row Level Security and allow all for anon key (adjust policies as needed)
-ALTER TABLE colleges   ENABLE ROW LEVEL SECURITY;
-ALTER TABLE tc_records ENABLE ROW LEVEL SECURITY;
+-- User profiles table (extends Supabase Auth users)
+CREATE TABLE IF NOT EXISTS user_profiles (
+  id         UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
+  email      TEXT NOT NULL,
+  role       TEXT NOT NULL DEFAULT 'user' CHECK (role IN ('admin', 'user')),
+  created_by UUID REFERENCES auth.users(id),
+  created_at TIMESTAMP DEFAULT NOW()
+);
 
-CREATE POLICY "allow_all_colleges"   ON colleges   FOR ALL USING (true) WITH CHECK (true);
-CREATE POLICY "allow_all_tc_records" ON tc_records FOR ALL USING (true) WITH CHECK (true);
+-- Enable Row Level Security
+ALTER TABLE colleges      ENABLE ROW LEVEL SECURITY;
+ALTER TABLE tc_records    ENABLE ROW LEVEL SECURITY;
+ALTER TABLE user_profiles ENABLE ROW LEVEL SECURITY;
+
+-- Colleges & TC: accessible to authenticated users only
+CREATE POLICY "auth_colleges"   ON colleges   FOR ALL TO authenticated USING (true) WITH CHECK (true);
+CREATE POLICY "auth_tc_records" ON tc_records FOR ALL TO authenticated USING (true) WITH CHECK (true);
+
+-- user_profiles: users can read their own; admins can read/write all
+CREATE POLICY "read_own_profile" ON user_profiles
+  FOR SELECT TO authenticated
+  USING (id = auth.uid());
+
+CREATE POLICY "admin_all_profiles" ON user_profiles
+  FOR ALL TO authenticated
+  USING (
+    EXISTS (SELECT 1 FROM user_profiles WHERE id = auth.uid() AND role = 'admin')
+  )
+  WITH CHECK (
+    EXISTS (SELECT 1 FROM user_profiles WHERE id = auth.uid() AND role = 'admin')
+  );
+
+-- Function to auto-create profile on signup (called by trigger)
+CREATE OR REPLACE FUNCTION handle_new_user()
+RETURNS TRIGGER AS $$
+BEGIN
+  INSERT INTO user_profiles (id, email, role)
+  VALUES (NEW.id, NEW.email, COALESCE(NEW.raw_user_meta_data->>'role', 'user'))
+  ON CONFLICT (id) DO NOTHING;
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+DROP TRIGGER IF EXISTS on_auth_user_created ON auth.users;
+CREATE TRIGGER on_auth_user_created
+  AFTER INSERT ON auth.users
+  FOR EACH ROW EXECUTE FUNCTION handle_new_user();
+
+-- ============================================================
+-- SEED: Create the first admin user
+-- Run this AFTER creating the user via Supabase Auth dashboard
+-- or use the app's first-run admin creation below.
+-- ============================================================
+-- INSERT INTO user_profiles (id, email, role)
+-- VALUES ('<auth-user-uuid>', 'admin@yourdomain.com', 'admin');

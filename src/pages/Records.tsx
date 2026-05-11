@@ -1,16 +1,20 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, ChangeEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 import { createRoot } from 'react-dom/client';
 import TCCertificate from '../components/TCCertificate';
-import { TCRecord, CollegeData } from '../types/tc';
-import { getAllTCs, deleteTC } from '../lib/tc';
+import { TCRecord, CollegeData, TCFormData } from '../types/tc';
+import { getAllTCs, deleteTC, updateTC } from '../lib/tc';
 import { getAllColleges } from '../lib/college';
 
 const Records: React.FC = () => {
   const [records,  setRecords]  = useState<TCRecord[]>([]);
   const [colleges, setColleges] = useState<Record<number, CollegeData>>({});
+  const [search,   setSearch]   = useState('');
+  const [editing,  setEditing]  = useState<TCRecord | null>(null);
+  const [editForm, setEditForm] = useState<Partial<TCFormData>>({});
+  const [saving,   setSaving]   = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -22,18 +26,18 @@ const Records: React.FC = () => {
     });
   }, []);
 
+  const filtered = records.filter(r =>
+    r.student_name.toLowerCase().includes(search.toLowerCase()) ||
+    r.tc_number.toLowerCase().includes(search.toLowerCase())
+  );
+
   const waitForImages = (el: HTMLElement): Promise<void> => {
     const imgs = Array.from(el.querySelectorAll('img'));
     if (!imgs.length) return Promise.resolve();
-    return Promise.all(
-      imgs.map(img => img.complete
-        ? Promise.resolve()
-        : new Promise<void>(resolve => {
-            img.onload = () => resolve();
-            img.onerror = () => resolve();
-          })
-      )
-    ).then(() => {});
+    return Promise.all(imgs.map(img => img.complete
+      ? Promise.resolve()
+      : new Promise<void>(res => { img.onload = () => res(); img.onerror = () => res(); })
+    )).then(() => {});
   };
 
   const downloadPDF = async (rec: TCRecord): Promise<void> => {
@@ -54,34 +58,54 @@ const Records: React.FC = () => {
     document.body.removeChild(container);
   };
 
-  const deleteTC_record = async (id: number): Promise<void> => {
+  const handleDelete = async (id: number): Promise<void> => {
     if (!window.confirm('Delete this TC record? This cannot be undone.')) return;
     await deleteTC(id);
     setRecords(prev => prev.filter(r => r.id !== id));
   };
 
+  const openEdit = (rec: TCRecord) => {
+    setEditing(rec);
+    const { id, tc_number, created_at, ...rest } = rec;
+    setEditForm(rest);
+  };
+
+  const handleEditChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+    setEditForm(prev => ({ ...prev, [e.target.name]: e.target.value }));
+  };
+
+  const handleSave = async () => {
+    if (!editing) return;
+    setSaving(true);
+    try {
+      const updated = await updateTC(editing.id, editForm);
+      setRecords(prev => prev.map(r => r.id === updated.id ? updated : r));
+      setEditing(null);
+    } finally {
+      setSaving(false);
+    }
+  };
+
   const fmt = (d: string): string => d ? new Date(d).toLocaleDateString('en-IN') : '—';
+  const thisYear = new Date().getFullYear();
 
   return (
     <div className="records-page">
       <div className="page-header">
         <h2>TC Records</h2>
-        <p>View and download all issued Transfer Certificates</p>
+        <p>View, edit, download and manage all issued Transfer Certificates</p>
       </div>
 
       <div className="records-stats">
         <div className="stat-card">
           <div className="stat-icon blue">📄</div>
-          <div className="stat-info">
-            <p>Total Issued</p>
-            <h3>{records.length}</h3>
-          </div>
+          <div className="stat-info"><p>Total Issued</p><h3>{records.length}</h3></div>
         </div>
         <div className="stat-card">
           <div className="stat-icon green">📅</div>
           <div className="stat-info">
             <p>This Year</p>
-            <h3>{records.filter(r => r.tc_number.includes(String(new Date().getFullYear()))).length}</h3>
+            <h3>{records.filter(r => r.tc_number.includes(String(thisYear))).length}</h3>
           </div>
         </div>
         <div className="stat-card">
@@ -96,7 +120,15 @@ const Records: React.FC = () => {
       <div className="table-card">
         <div className="table-toolbar">
           <h3>All Transfer Certificates</h3>
-          <span className="table-count">{records.length} records</span>
+          <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
+            <input
+              className="rec-search"
+              placeholder="🔍 Search by name or TC no…"
+              value={search}
+              onChange={e => setSearch(e.target.value)}
+            />
+            <span className="table-count">{filtered.length} records</span>
+          </div>
         </div>
         <table className="records-table">
           <thead>
@@ -110,7 +142,7 @@ const Records: React.FC = () => {
             </tr>
           </thead>
           <tbody>
-            {records.map(r => (
+            {filtered.map(r => (
               <tr key={r.id}>
                 <td><span className="tc-badge">{r.tc_number}</span></td>
                 <td><span className="student-name">{r.student_name}</span></td>
@@ -126,24 +158,74 @@ const Records: React.FC = () => {
                 <td>{fmt(r.leaving_date)}</td>
                 <td>
                   <button className="action-btn view"     onClick={() => navigate(`/preview/${r.id}`)}>👁 View</button>
+                  <button className="action-btn edit"     onClick={() => openEdit(r)}>✏ Edit</button>
                   <button className="action-btn download" onClick={() => downloadPDF(r)}>⬇ PDF</button>
-                  <button className="action-btn delete"   onClick={() => deleteTC_record(r.id)}>🗑 Delete</button>
+                  <button className="action-btn delete"   onClick={() => handleDelete(r.id)}>🗑 Delete</button>
                 </td>
               </tr>
             ))}
-            {!records.length && (
-              <tr>
-                <td colSpan={6}>
-                  <div className="empty-state">
-                    <div className="empty-state-icon">📭</div>
-                    <p>No records found. Generate your first TC.</p>
-                  </div>
-                </td>
-              </tr>
+            {!filtered.length && (
+              <tr><td colSpan={6}>
+                <div className="empty-state">
+                  <div className="empty-state-icon">📭</div>
+                  <p>{search ? 'No matching records.' : 'No records found. Generate your first TC.'}</p>
+                </div>
+              </td></tr>
             )}
           </tbody>
         </table>
       </div>
+
+      {/* Edit Modal */}
+      {editing && (
+        <div className="modal-overlay" onClick={() => setEditing(null)}>
+          <div className="modal-box" onClick={e => e.stopPropagation()}>
+            <div className="modal-head">
+              <h3>Edit TC — {editing.tc_number}</h3>
+              <button className="modal-close" onClick={() => setEditing(null)}>✕</button>
+            </div>
+            <div className="modal-body">
+              <div className="edit-grid">
+                {([
+                  ['student_name', 'Student Name', 'text'],
+                  ['parent_name',  'Parent Name',  'text'],
+                  ['id_number',    'ID Number',    'text'],
+                  ['dob',          'Date of Birth','date'],
+                  ['dob_words',    'DOB in Words', 'text'],
+                  ['admission_date','Admission Date','date'],
+                  ['study_period', 'Study Period', 'text'],
+                  ['leaving_date', 'Leaving Date', 'date'],
+                  ['class_at_leaving','Class at Leaving','text'],
+                  ['medium',       'Medium',       'text'],
+                  ['promotion_status','Promotion Status','text'],
+                  ['application_date','Application Date','date'],
+                  ['conduct',      'Conduct',      'text'],
+                ] as [keyof TCFormData, string, string][]).map(([key, label, type]) => (
+                  <div key={key} className="edit-field">
+                    <label>{label}</label>
+                    <input
+                      type={type}
+                      name={key}
+                      value={(editForm[key] as string) ?? ''}
+                      onChange={handleEditChange}
+                    />
+                  </div>
+                ))}
+                <div className="edit-field full">
+                  <label>Reason</label>
+                  <textarea name="reason" value={editForm.reason ?? ''} onChange={handleEditChange} rows={3} />
+                </div>
+              </div>
+            </div>
+            <div className="modal-foot">
+              <button className="action-btn view" onClick={() => setEditing(null)}>Cancel</button>
+              <button className="action-btn download" onClick={handleSave} disabled={saving}>
+                {saving ? 'Saving…' : '💾 Save Changes'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
