@@ -1,9 +1,14 @@
 import supabase, { supabaseAdmin } from '../api/supabase';
 import { UserProfile } from '../types/auth';
 
-export async function signIn(email: string, password: string) {
-  const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-  if (error) throw error;
+const toEmail = (username: string) => `${username.toLowerCase().trim()}@tc.local`;
+
+export async function signIn(username: string, password: string) {
+  const { data, error } = await supabase.auth.signInWithPassword({
+    email: toEmail(username),
+    password,
+  });
+  if (error) throw new Error('Invalid username or password');
   return data;
 }
 
@@ -22,7 +27,6 @@ export async function getMyProfile(): Promise<UserProfile | null> {
   return data;
 }
 
-// Admin: list all users from user_profiles
 export async function listUsers(): Promise<UserProfile[]> {
   const { data, error } = await supabaseAdmin
     .from('user_profiles')
@@ -32,67 +36,47 @@ export async function listUsers(): Promise<UserProfile[]> {
   return data || [];
 }
 
-// Admin: create user with temp password, then send password reset email
 export async function createUser(
-  email: string,
+  username: string,
+  password: string,
   role: 'admin' | 'user',
   createdBy: string
 ): Promise<void> {
-  const tempPassword = generatePassword();
-
-  // 1. Create the auth user
+  const email = toEmail(username);
   const { data, error } = await supabaseAdmin.auth.admin.createUser({
     email,
-    password: tempPassword,
+    password,
     email_confirm: true,
-    user_metadata: { role },
+    user_metadata: { role, username },
   });
-  if (error) throw error;
+  if (error) throw new Error(error.message.includes('already') ? 'Username already exists' : error.message);
 
-  // 2. Upsert profile with role
   await supabaseAdmin.from('user_profiles').upsert({
     id: data.user.id,
     email,
+    username,
     role,
     created_by: createdBy,
   });
-
-  // 3. Send password reset email so user sets their own password
-  const { error: resetErr } = await supabaseAdmin.auth.resetPasswordForEmail(email, {
-    redirectTo: `${getAppUrl()}/reset-password`,
-  });
-  if (resetErr) throw resetErr;
 }
 
-// Admin: resend password reset email
-export async function resendPassword(email: string): Promise<void> {
-  const { error } = await supabaseAdmin.auth.resetPasswordForEmail(email, {
-    redirectTo: `${getAppUrl()}/reset-password`,
-  });
+export async function updateUser(
+  userId: string,
+  username: string,
+  password: string,
+  role: 'admin' | 'user'
+): Promise<void> {
+  const email = toEmail(username);
+  const updates: any = { email, user_metadata: { role, username } };
+  if (password) updates.password = password;
+
+  const { error } = await supabaseAdmin.auth.admin.updateUserById(userId, updates);
   if (error) throw error;
+
+  await supabaseAdmin.from('user_profiles').update({ email, username, role }).eq('id', userId);
 }
 
-function getAppUrl(): string {
-  // Use env var if set (for production), otherwise fall back to current origin
-  return process.env.REACT_APP_SITE_URL?.replace(/\/$/, '') || window.location.origin;
-}
-
-// Admin: delete user
 export async function deleteUser(userId: string): Promise<void> {
   const { error } = await supabaseAdmin.auth.admin.deleteUser(userId);
   if (error) throw error;
-}
-
-// Admin: update role in user_profiles
-export async function updateUserRole(userId: string, role: 'admin' | 'user'): Promise<void> {
-  const { error } = await supabaseAdmin
-    .from('user_profiles')
-    .update({ role })
-    .eq('id', userId);
-  if (error) throw error;
-}
-
-function generatePassword(): string {
-  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789@#$!';
-  return Array.from({ length: 12 }, () => chars[Math.floor(Math.random() * chars.length)]).join('');
 }

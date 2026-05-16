@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { listUsers, createUser, resendPassword, deleteUser, updateUserRole } from '../lib/auth';
+import { listUsers, createUser, updateUser, deleteUser } from '../lib/auth';
 import { useAuth } from '../context/AuthContext';
 import { UserProfile } from '../types/auth';
 import './AdminPanel.css';
@@ -7,59 +7,68 @@ import './AdminPanel.css';
 const AdminPanel: React.FC = () => {
   const { profile } = useAuth();
   const [users, setUsers] = useState<UserProfile[]>([]);
-  const [email, setEmail] = useState('');
-  const [role, setRole] = useState<'admin' | 'user'>('user');
   const [error, setError] = useState('');
   const [info, setInfo] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [actionId, setActionId] = useState<string | null>(null);
+
+  // Create form
+  const [newUsername, setNewUsername] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [newRole, setNewRole] = useState<'admin' | 'user'>('user');
+  const [creating, setCreating] = useState(false);
+
+  // Edit modal
+  const [editing, setEditing] = useState<UserProfile | null>(null);
+  const [editUsername, setEditUsername] = useState('');
+  const [editPassword, setEditPassword] = useState('');
+  const [editRole, setEditRole] = useState<'admin' | 'user'>('user');
+  const [saving, setSaving] = useState(false);
 
   const load = () => listUsers().then(setUsers).catch(e => setError(e.message));
-
   useEffect(() => { load(); }, []);
 
   const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError(''); setInfo(''); setLoading(true);
+    setError(''); setInfo(''); setCreating(true);
     try {
-      await createUser(email, role, profile!.id);
-      setInfo(`User ${email} created. Credentials sent to their email.`);
-      setEmail(''); setRole('user');
+      await createUser(newUsername.trim(), newPassword, newRole, profile!.id);
+      setInfo(`User "${newUsername.trim()}" created successfully.`);
+      setNewUsername(''); setNewPassword(''); setNewRole('user');
       load();
     } catch (err: any) {
       setError(err.message);
     } finally {
-      setLoading(false);
+      setCreating(false);
     }
   };
 
-  const handleResend = async (userEmail: string) => {
-    setError(''); setInfo(''); setActionId(userEmail);
-    try {
-      await resendPassword(userEmail);
-      setInfo(`New password sent to ${userEmail}`);
-    } catch (err: any) {
-      setError(err.message);
-    } finally {
-      setActionId(null);
-    }
+  const openEdit = (u: UserProfile) => {
+    setEditing(u);
+    setEditUsername(u.username || u.email.replace('@tc.local', ''));
+    setEditPassword('');
+    setEditRole(u.role);
+    setError(''); setInfo('');
   };
 
-  const handleDelete = async (userId: string, userEmail: string) => {
-    if (!window.confirm(`Delete user ${userEmail}?`)) return;
-    setError('');
+  const handleSave = async () => {
+    if (!editing) return;
+    setError(''); setSaving(true);
     try {
-      await deleteUser(userId);
+      await updateUser(editing.id, editUsername.trim(), editPassword, editRole);
+      setInfo(`User "${editUsername.trim()}" updated.`);
+      setEditing(null);
       load();
     } catch (err: any) {
       setError(err.message);
+    } finally {
+      setSaving(false);
     }
   };
 
-  const handleRoleChange = async (userId: string, newRole: 'admin' | 'user') => {
+  const handleDelete = async (u: UserProfile) => {
+    if (!window.confirm(`Delete user "${u.username || u.email.replace('@tc.local', '')}"? This cannot be undone.`)) return;
     setError('');
     try {
-      await updateUserRole(userId, newRole);
+      await deleteUser(u.id);
       load();
     } catch (err: any) {
       setError(err.message);
@@ -75,18 +84,22 @@ const AdminPanel: React.FC = () => {
 
       {/* Create User */}
       <div className="adm-card">
-        <h3>Create New User</h3>
+        <h3>Add New User</h3>
         <form className="adm-form" onSubmit={handleCreate}>
           <input
-            type="email" required placeholder="Email address"
-            value={email} onChange={e => setEmail(e.target.value)}
+            required placeholder="Username"
+            value={newUsername} onChange={e => setNewUsername(e.target.value)}
           />
-          <select value={role} onChange={e => setRole(e.target.value as 'admin' | 'user')}>
+          <input
+            required type="password" placeholder="Password" minLength={6}
+            value={newPassword} onChange={e => setNewPassword(e.target.value)}
+          />
+          <select value={newRole} onChange={e => setNewRole(e.target.value as 'admin' | 'user')}>
             <option value="user">User</option>
             <option value="admin">Admin</option>
           </select>
-          <button type="submit" disabled={loading} className="adm-btn primary">
-            {loading ? 'Creating…' : '+ Create & Send Credentials'}
+          <button type="submit" disabled={creating} className="adm-btn primary">
+            {creating ? 'Creating…' : '+ Add User'}
           </button>
         </form>
       </div>
@@ -97,7 +110,7 @@ const AdminPanel: React.FC = () => {
         <table className="adm-table">
           <thead>
             <tr>
-              <th>Email</th>
+              <th>Username</th>
               <th>Role</th>
               <th>Created</th>
               <th>Actions</th>
@@ -106,31 +119,13 @@ const AdminPanel: React.FC = () => {
           <tbody>
             {users.map(u => (
               <tr key={u.id}>
-                <td>{u.email}</td>
-                <td>
-                  <select
-                    value={u.role}
-                    onChange={e => handleRoleChange(u.id, e.target.value as 'admin' | 'user')}
-                    disabled={u.id === profile?.id}
-                    className="role-select"
-                  >
-                    <option value="user">User</option>
-                    <option value="admin">Admin</option>
-                  </select>
-                </td>
+                <td><strong>{u.username || u.email.replace('@tc.local', '')}</strong></td>
+                <td><span className={`role-badge ${u.role}`}>{u.role}</span></td>
                 <td>{u.created_at ? new Date(u.created_at).toLocaleDateString() : '—'}</td>
                 <td className="adm-actions">
-                  <button
-                    className="adm-btn secondary"
-                    onClick={() => handleResend(u.email)}
-                    disabled={actionId === u.email}
-                  >
-                    {actionId === u.email ? '…' : '🔑 Resend Password'}
-                  </button>
+                  <button className="adm-btn secondary" onClick={() => openEdit(u)}>✏ Edit</button>
                   {u.id !== profile?.id && (
-                    <button className="adm-btn danger" onClick={() => handleDelete(u.id, u.email)}>
-                      🗑 Delete
-                    </button>
+                    <button className="adm-btn danger" onClick={() => handleDelete(u)}>🗑 Delete</button>
                   )}
                 </td>
               </tr>
@@ -141,6 +136,45 @@ const AdminPanel: React.FC = () => {
           </tbody>
         </table>
       </div>
+
+      {/* Edit Modal */}
+      {editing && (
+        <div className="modal-overlay" onClick={() => setEditing(null)}>
+          <div className="adm-modal" onClick={e => e.stopPropagation()}>
+            <div className="adm-modal-head">
+              <h3>Edit User</h3>
+              <button className="modal-close" onClick={() => setEditing(null)}>✕</button>
+            </div>
+            <div className="adm-modal-body">
+              <label>Username</label>
+              <input
+                value={editUsername}
+                onChange={e => setEditUsername(e.target.value)}
+                placeholder="Username"
+              />
+              <label>New Password <span className="hint">(leave blank to keep current)</span></label>
+              <input
+                type="password"
+                value={editPassword}
+                onChange={e => setEditPassword(e.target.value)}
+                placeholder="New password"
+                minLength={6}
+              />
+              <label>Role</label>
+              <select value={editRole} onChange={e => setEditRole(e.target.value as 'admin' | 'user')}>
+                <option value="user">User</option>
+                <option value="admin">Admin</option>
+              </select>
+            </div>
+            <div className="adm-modal-foot">
+              <button className="adm-btn secondary" onClick={() => setEditing(null)}>Cancel</button>
+              <button className="adm-btn primary" onClick={handleSave} disabled={saving}>
+                {saving ? 'Saving…' : 'Save Changes'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

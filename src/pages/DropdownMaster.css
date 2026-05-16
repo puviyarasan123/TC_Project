@@ -1,0 +1,208 @@
+.dm-wrap {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 32px 20px;
+}
+
+.dm-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.dm-title { font-size: 24px; font-weight: 700; color: var(--primary); margin: 0; }
+.dm-sub   { font-size: 13px; color: var(--text-muted); margin: 4px 0 0; }
+
+/* ── Tabs ── */
+.dm-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 20px;
+  border-bottom: 2px solid var(--border);
+  padding-bottom: 0;
+}
+
+.dm-tab {
+  padding: 8px 16px;
+  border: none;
+  background: none;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-muted);
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -2px;
+  transition: all .15s;
+  font-family: 'Inter', sans-serif;
+  border-radius: 6px 6px 0 0;
+}
+.dm-tab:hover  { color: var(--primary); background: var(--surface-2); }
+.dm-tab.active { color: var(--primary); border-bottom-color: var(--primary); font-weight: 600; }
+
+/* ── Panel ── */
+.dm-panel {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  box-shadow: 0 2px 12px rgba(0,0,0,.06);
+  overflow: hidden;
+}
+
+.dm-panel-head {
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface-2);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.dm-panel-head h3 { font-size: 14px; font-weight: 600; color: var(--primary); margin: 0; }
+.dm-panel-head p  { font-size: 12px; color: var(--text-muted); margin: 2px 0 0; }
+
+/* parent filter for community/caste */
+.dm-parent-filter {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.dm-parent-filter label { font-size: 12px; font-weight: 600; color: var(--text-muted); }
+.dm-parent-select {
+  padding: 6px 10px;
+  border: 1.5px solid var(--border);
+  border-radius: 6px;
+  font-size: 13px;
+  font-family: 'Inter', sans-serif;
+  outline: none;
+  color: var(--text);
+  background: #fff;
+}
+.dm-parent-select:focus { border-color: var(--primary-light); }
+
+/* ── Add row ── */
+.dm-add-row {
+  padding: 14px 20px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  background: #fafbfd;
+}
+
+.dm-add-input {
+  flex: 1;
+  padding: 8px 12px;
+  border: 1.5px solid var(--border);
+  border-radius: 7px;
+  font-size: 13.5px;
+  font-family: 'Inter', sans-serif;
+  outline: none;
+  color: var(--text);
+  transition: border-color .2s;
+}
+.dm-add-input:focus { border-color: var(--primary-light); box-shadow: 0 0 0 3px rgba(45,90,142,.08); }
+
+.dm-add-btn {
+  padding: 8px 18px;
+  background: linear-gradient(135deg, var(--primary), var(--primary-light));
+  color: #fff;
+  border: none;
+  border-radius: 7px;
+  font-size: 13px;
+  font-weight: 600;
+  font-family: 'Inter', sans-serif;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: opacity .2s;
+}
+.dm-add-btn:hover:not(:disabled) { opacity: .88; }
+.dm-add-btn:disabled { opacity: .5; cursor: not-allowed; }
+
+/* ── Items list ── */
+.dm-list {
+  max-height: 480px;
+  overflow-y: auto;
+}
+
+.dm-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 20px;
+  border-bottom: 1px solid var(--border);
+  transition: background .12s;
+}
+.dm-item:last-child { border-bottom: none; }
+.dm-item:hover { background: #f5f8ff; }
+
+.dm-item-label {
+  font-size: 13.5px;
+  color: var(--text);
+  flex: 1;
+}
+.dm-item-parent {
+  font-size: 11px;
+  color: var(--text-muted);
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 2px 7px;
+  margin-right: 10px;
+}
+
+.dm-del-btn {
+  padding: 4px 10px;
+  background: #fef2f2;
+  color: var(--danger);
+  border: 1px solid #fecaca;
+  border-radius: 5px;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  font-family: 'Inter', sans-serif;
+  transition: all .15s;
+  flex-shrink: 0;
+}
+.dm-del-btn:hover { background: var(--danger); color: #fff; border-color: var(--danger); }
+
+.dm-empty {
+  padding: 40px 20px;
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 13px;
+}
+
+.dm-count {
+  font-size: 12px;
+  color: var(--text-muted);
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 3px 10px;
+}
+
+.dm-error {
+  background: #fef2f2; color: var(--danger);
+  border: 1px solid #fecaca;
+  border-radius: 7px; padding: 10px 14px;
+  font-size: 13px; margin-bottom: 16px;
+}
+.dm-info {
+  background: #f0fdf4; color: #15803d;
+  border: 1px solid #bbf7d0;
+  border-radius: 7px; padding: 10px 14px;
+  font-size: 13px; margin-bottom: 16px;
+}
+
+.dm-loading {
+  padding: 40px 20px;
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 13px;
+}

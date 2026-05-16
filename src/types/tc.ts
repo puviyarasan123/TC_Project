@@ -1,6 +1,9 @@
 export interface TCFormData {
   student_name: string;
-  parent_name: string;
+  father_name: string;
+  mother_name: string;
+  guardian_name: string;
+  parent_name: string;   // kept for backward compat
   gender: string;
   nationality: string;
   religion: string;

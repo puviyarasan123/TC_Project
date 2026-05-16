@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef, ChangeEvent } from 'react';
+import React, { useEffect, useState, ChangeEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
@@ -50,7 +50,7 @@ const Records: React.FC = () => {
     const el = container.firstElementChild as HTMLElement;
     await waitForImages(el);
     const canvas = await html2canvas(el, { scale: 2, backgroundColor: '#ffffff', useCORS: true });
-    const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+    const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a3' });
     pdf.addImage(canvas.toDataURL('image/png'), 'PNG', 0, 0,
       pdf.internal.pageSize.getWidth(), pdf.internal.pageSize.getHeight());
     pdf.save(`TC_${rec.tc_number.replace(/\//g, '_')}.pdf`);
@@ -188,7 +188,9 @@ const Records: React.FC = () => {
               <div className="edit-grid">
                 {([
                   ['student_name', 'Student Name', 'text'],
-                  ['parent_name',  'Parent Name',  'text'],
+                  ['father_name',  "Father's Name", 'text'],
+                  ['mother_name',  "Mother's Name", 'text'],
+                  ['guardian_name','Guardian Name', 'text'],
                   ['id_number',    'ID Number',    'text'],
                   ['dob',          'Date of Birth','date'],
                   ['dob_words',    'DOB in Words', 'text'],

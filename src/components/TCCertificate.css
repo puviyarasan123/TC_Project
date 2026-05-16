@@ -1,70 +1,44 @@
-/* A4 Certificate - 210mm × 297mm */
+/* ── A3 Certificate — 297mm × 420mm ── */
 .tc-cert {
-  width: 210mm;
-  min-height: 297mm;
+  width: 297mm;
+  min-height: 420mm;
   background: #fff;
   font-family: 'Times New Roman', Times, serif;
-  padding: 10mm 16mm 10mm 12mm;
+  padding: 8mm 20mm 14mm 20mm;
   position: relative;
-  overflow: hidden;
   box-sizing: border-box;
   color: #000;
+  box-shadow: 0 4px 32px rgba(0,0,0,.18);
+  margin: 0 auto;
 }
 
-/* ── Right decorative border: two columns of alternating flowers ── */
-.right-border {
-  position: absolute;
-  right: 0;
-  top: 0;
-  bottom: 0;
-  width: 13mm;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  align-content: space-around;
-  justify-items: center;
-  overflow: hidden;
-  border-left: 1.5px solid #444;
-  background: #fff;
-  padding: 6px 1px;
-  box-sizing: border-box;
-}
-.border-unit {
-  font-size: 12px;
-  color: #444;
-  line-height: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  user-select: none;
-}
-
-/* ── Watermark: logo image, large, centered, faint ── */
+/* ── Watermark ── */
 .watermark {
   position: absolute;
   top: 52%;
-  left: 46%;
+  left: 50%;
   transform: translate(-50%, -50%);
   z-index: 0;
   pointer-events: none;
 }
 .watermark-img {
-  width: 500px;
-  height: 500px;
+  width: 420px;
+  height: 420px;
   object-fit: contain;
-  opacity: 0.09;
+  opacity: 0.07;
 }
 .watermark-circle {
-  width: 200px;
-  height: 200px;
+  width: 220px;
+  height: 220px;
   border-radius: 50%;
-  border: 3px solid rgba(0,0,0,0.06);
+  border: 3px solid rgba(0,0,0,0.05);
   display: flex;
   align-items: center;
   justify-content: center;
 }
 .watermark-text {
-  font-size: 11px;
-  color: rgba(0,0,0,0.06);
+  font-size: 12px;
+  color: rgba(0,0,0,0.05);
   text-align: center;
   font-weight: bold;
   letter-spacing: 1px;
@@ -72,26 +46,24 @@
   line-height: 1.4;
 }
 
-/* ── Header ── */
+/* ── Header: logo left, text center ── */
 .tc-header {
   display: flex;
   align-items: center;
-  margin-bottom: 5px;
+  margin-bottom: 4px;
   position: relative;
   z-index: 1;
 }
 .header-logo {
   flex-shrink: 0;
-  margin-right: 14px;
+  margin-right: 16px;
 }
-/* Raw logo — no border, no radius, natural shape like real TC */
 .logo-img {
-  width: 120px;
-  height:120px;
+  width: 110px;
+  height: 110px;
   object-fit: contain;
   display: block;
 }
-/* Fallback only */
 .logo-circle {
   width: 100px;
   height: 100px;
@@ -119,130 +91,214 @@
   flex: 1;
   text-align: center;
 }
+
+/* Exact font sizes from docx:
+   College name  = 30pt half-points = 15pt
+   Trust name    = 24pt half-points = 12pt (italic)
+   Accreditation = 19pt half-points = 9.5pt (italic/bold)
+   Affiliation   = 19pt half-points = 9.5pt (bold italic)
+   Address       = 24pt half-points = 12pt
+*/
 .college-name {
-  font-size: 22px;
+  font-size: 20px;        /* ~15pt */
   font-weight: bold;
-  letter-spacing: 0.5px;
-  line-height: 1.2;
-  margin-bottom: 2px;
+  letter-spacing: 0.4px;
+  line-height: 1.25;
+  margin-bottom: 1px;
   color: #000;
 }
-.college-sub  { font-size: 13px;   font-weight: bold; line-height: 1.55; color: #000; }
-.college-addr { font-size: 12.5px; font-weight: bold; line-height: 1.55; color: #000; }
+.college-trust {
+  font-size: 14px;        /* ~12pt */
+  font-style: italic;
+  font-weight: normal;
+  line-height: 1.4;
+  color: #000;
+}
+.college-accred {
+  font-size: 11px;        /* ~9.5pt */
+  font-style: italic;
+  line-height: 1.4;
+  color: #000;
+}
+.college-accred strong {
+  font-weight: bold;
+  font-style: italic;
+}
+.college-affil {
+  font-size: 11px;        /* ~9.5pt */
+  line-height: 1.4;
+  color: #000;
+}
+.college-affil strong {
+  font-weight: bold;
+  font-style: italic;
+}
+.college-addr {
+  font-size: 14px;        /* ~12pt */
+  line-height: 1.4;
+  color: #000;
+}
 
-/* ── Title bar: black bg, white text, centered/inline not full width ── */
+/* ── Divider line below header ── */
+.tc-divider {
+  border: none;
+  border-top: 1.5px solid #000;
+  margin: 5px 0 4px 0;
+  position: relative;
+  z-index: 1;
+}
+
+/* ── Title: TRANSFER CERTIFICATE — bold, underlined, centered ── */
 .tc-title-bar {
   text-align: center;
-  margin: 8px 0 10px 0;
+  margin: 4px 0 6px 0;
   position: relative;
   z-index: 1;
 }
 .tc-title-bar span {
   display: inline-block;
-  background: #111;
-  color: #fff;
-  padding: 4px 28px;
-  font-size: 13px;
+  font-size: 16px;        /* ~14pt */
   font-weight: bold;
+  text-decoration: underline;
   letter-spacing: 2px;
-  border: 1.5px solid #000;
+  color: #000;
 }
 
 /* ── TC No / ID No row ── */
 .tc-top-row {
   display: flex;
   justify-content: space-between;
-  font-size: 13.5px;
-  margin-top: 8px;
-  margin-bottom: 18px;
+  font-size: 14px;        /* ~12pt */
+  font-weight: bold;
+  margin-bottom: 6px;
   position: relative;
   z-index: 1;
 }
 
-/* ── Main body rows ── */
+/* ── Main body table ── */
 .tc-body {
   position: relative;
   z-index: 1;
+  width: 100%;
 }
 
+/* Each row: number | label | colon | value
+   Double line spacing from docx = line-height ~2 on 12pt = ~34px row height */
 .tc-row {
   display: flex;
   align-items: flex-start;
-  min-height: 36px;
-  margin-bottom: 7px;
-  font-size: 12.5px;
+  min-height: 38px;
+  font-size: 13.5px;      /* ~12pt */
+  line-height: 2;
+}
+.tc-row.tall { min-height: 72px; }
+
+.tc-num-col {
+  width: 32px;
+  flex-shrink: 0;
+  font-size: 13.5px;
+  line-height: 2;
+  padding-top: 0;
+}
+.tc-label-col {
+  width: 230px;
+  flex-shrink: 0;
+  font-size: 13.5px;
   line-height: 1.6;
-}
-.tc-row.two-line { min-height: 54px; }
-
-.tc-label {
-  width: 200px;
-  flex-shrink: 0;
-  display: flex;
-  align-items: flex-start;
-  padding-top: 1px;
-}
-.tc-num        { width: 24px; flex-shrink: 0; font-size: 12.5px; }
-.tc-label-text { flex: 1; font-size: 12.5px; line-height: 1.45; }
-.sub-label     { font-size: 11.5px; }
-
-.tc-colon {
-  width: 10px;
-  flex-shrink: 0;
-  padding-top: 1px;
-  font-size: 12.5px;
-}
-
-.tc-value {
-  flex: 1;
-  padding-top: 1px;
-  min-width: 0;
-}
-
-/* ── Dotted underline ── */
-.dot-line {
-  display: inline-block;
-  border-bottom: 1.5px dotted #333;
-  min-width: 60px;
-  font-size: 12.5px;
-  padding-bottom: 1px;
-  vertical-align: bottom;
-}
-.dot-line.wide   { width: 100%; display: block; }
-.dot-line.short  { min-width: 80px; }
-.dot-line.medium { min-width: 120px; }
-
-/* ── Gender checkboxes ── */
-.gender-box {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 12.5px;
   padding-top: 2px;
 }
-.checkbox {
-  display: inline-block;
-  width: 13px;
-  height: 13px;
-  border: 1.5px solid #333;
-  vertical-align: middle;
-  position: relative;
-  background: #fff;
+.tc-colon-col {
+  width: 14px;
+  flex-shrink: 0;
+  font-size: 13.5px;
+  line-height: 2;
+  text-align: center;
 }
-.checkbox.checked::after {
-  content: '✓';
-  position: absolute;
-  top: -2px;
-  left: 1px;
-  font-size: 11px;
+.tc-value-col {
+  flex: 1;
+  font-size: 13.5px;
+  line-height: 2;
+  min-width: 0;
+  padding-top: 0;
+}
+
+/* sub-label inside label (smaller, same italic as docx) */
+.sub-label {
+  font-size: 12px;
+  display: block;
+  line-height: 1.4;
+}
+
+/* ── Dotted underline for values ── */
+.dot-line {
+  display: inline-block;
+  border-bottom: 1px dotted #333;
+  min-width: 80px;
+  font-size: 13.5px;
+  padding-bottom: 0;
+  vertical-align: bottom;
+  line-height: 1.8;
+}
+.dot-line.wide {
+  width: 100%;
+  display: block;
+}
+.dot-line.short  { min-width: 100px; }
+.dot-line.medium { min-width: 150px; }
+
+/* ── Gender row — selected bold/dark, others faded ── */
+.gender-row {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  font-size: 13.5px;
+  line-height: 2;
+}
+.gender-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: #bbb;
+}
+.gender-item.selected {
   color: #000;
+  font-weight: bold;
+  text-decoration: underline;
+}
+.gender-dots {
+  letter-spacing: 2px;
+  color: #ccc;
+}
+
+/* ── Parent sub-rows (Father / Mother / Guardian) ── */
+.parent-sub {
+  display: flex;
+  align-items: flex-start;
+  font-size: 13.5px;
+  line-height: 2;
+  min-height: 38px;
+}
+.parent-sub-label {
+  width: 160px;
+  flex-shrink: 0;
+  font-size: 13.5px;
+  line-height: 2;
+}
+.parent-sub-colon {
+  width: 14px;
+  flex-shrink: 0;
+  text-align: center;
+  line-height: 2;
+}
+.parent-sub-value {
+  flex: 1;
+  line-height: 2;
 }
 
 /* ── DOB block ── */
 .dob-block {
   display: flex;
   flex-direction: column;
-  gap: 4px;
   width: 100%;
 }
 
@@ -251,29 +307,31 @@
   display: flex;
   justify-content: space-between;
   align-items: flex-end;
-  margin-top: 40px;
+  margin-top: 32px;
   position: relative;
   z-index: 1;
-  font-size: 13px;
+  font-size: 14px;
 }
 .footer-left {
   display: flex;
   flex-direction: column;
-  gap: 18px;
+  gap: 20px;
 }
-.footer-right { text-align: center; }
+.footer-right {
+  text-align: center;
+}
 .principal-label {
-  font-size: 13.5px;
+  font-size: 15px;
   font-weight: bold;
   letter-spacing: 1px;
-  margin-top: 44px;
+  margin-top: 50px;
 }
 
 @media print {
   .tc-cert {
-    width: 210mm;
-    min-height: 297mm;
+    width: 297mm;
+    min-height: 420mm;
     margin: 0;
-    padding: 10mm 16mm 10mm 12mm;
+    padding: 8mm 20mm 14mm 20mm;
   }
 }

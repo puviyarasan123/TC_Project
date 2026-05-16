@@ -793,9 +793,11 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: flex-start;
   padding: 32px 20px 48px;
   background: linear-gradient(160deg, #e8edf5 0%, #d4dce8 100%);
-  min-height: calc(100vh - 64px);
+  min-height: calc(100vh - 60px);
+  overflow-x: auto;
 }
 
 .preview-toolbar {
@@ -809,7 +811,7 @@ body {
   padding: 10px 16px;
   box-shadow: var(--shadow-sm);
   width: 100%;
-  max-width: 210mm;
+  max-width: 297mm;
 }
 
 .preview-toolbar-title {

@@ -6,8 +6,8 @@ import TCPreview from './pages/TCPreview';
 import Records from './pages/Records';
 import Colleges from './pages/Colleges';
 import Login from './pages/Login';
-import ResetPassword from './pages/ResetPassword';
 import AdminPanel from './pages/AdminPanel';
+import DropdownMaster from './pages/DropdownMaster';
 import { CollegeProvider } from './context/CollegeContext';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { signOut } from './lib/auth';
@@ -45,15 +45,18 @@ const Sidebar: React.FC<{ onClose?: () => void }> = ({ onClose }) => {
             <NavLink to="/admin" className={({ isActive }) => `sidebar-link${isActive ? ' active' : ''}`} onClick={onClose}>
               <span className="sl-icon">👤</span> User Management
             </NavLink>
+            <NavLink to="/dropdowns" className={({ isActive }) => `sidebar-link${isActive ? ' active' : ''}`} onClick={onClose}>
+              <span className="sl-icon">⚙</span> Dropdown Master
+            </NavLink>
           </>
         )}
       </nav>
 
       <div className="sidebar-footer">
         <div className="sidebar-user">
-          <div className="sidebar-avatar">{profile?.email?.[0]?.toUpperCase() ?? 'U'}</div>
+          <div className="sidebar-avatar">{(profile?.username || profile?.email)?.[0]?.toUpperCase() ?? 'U'}</div>
           <div className="sidebar-user-info">
-            <div className="sidebar-user-email">{profile?.email ?? '—'}</div>
+            <div className="sidebar-user-email">{profile?.username || profile?.email || '—'}</div>
             <div className="sidebar-user-role">{profile?.role ?? 'user'}</div>
           </div>
         </div>
@@ -92,7 +95,8 @@ const ProtectedLayout: React.FC = () => {
               <Route path="/preview/:id"  element={<TCPreview />} />
               <Route path="/records"      element={<Records />} />
               <Route path="/colleges"     element={<Colleges />} />
-              <Route path="/admin"        element={<AdminPanel />} />
+              <Route path="/admin"      element={<AdminPanel />} />
+              <Route path="/dropdowns"  element={<DropdownMaster />} />
               <Route path="*"             element={<Navigate to="/" replace />} />
             </Routes>
           </div>
@@ -106,9 +110,8 @@ const App: React.FC = () => (
   <BrowserRouter>
     <AuthProvider>
       <Routes>
-        <Route path="/login"          element={<Login />} />
-        <Route path="/reset-password" element={<ResetPassword />} />
-        <Route path="/*"              element={<ProtectedLayout />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/*"    element={<ProtectedLayout />} />
       </Routes>
     </AuthProvider>
   </BrowserRouter>

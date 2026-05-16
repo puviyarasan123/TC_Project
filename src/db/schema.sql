@@ -15,8 +15,11 @@ CREATE TABLE IF NOT EXISTS tc_records (
   tc_number        VARCHAR(20) UNIQUE NOT NULL,
   id_number        VARCHAR(50),
   student_name     VARCHAR(200) NOT NULL,
+  father_name      VARCHAR(200),
+  mother_name      VARCHAR(200),
+  guardian_name    VARCHAR(200),
   parent_name      VARCHAR(200),
-  gender           VARCHAR(10),
+  gender           VARCHAR(20),
   nationality      VARCHAR(100),
   religion         VARCHAR(100),
   community        VARCHAR(100),
@@ -40,19 +43,45 @@ CREATE TABLE IF NOT EXISTS tc_records (
 CREATE TABLE IF NOT EXISTS user_profiles (
   id         UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
   email      TEXT NOT NULL,
+  username   TEXT NOT NULL DEFAULT '',
   role       TEXT NOT NULL DEFAULT 'user' CHECK (role IN ('admin', 'user')),
   created_by UUID REFERENCES auth.users(id),
   created_at TIMESTAMP DEFAULT NOW()
 );
 
--- Enable Row Level Security
-ALTER TABLE colleges      ENABLE ROW LEVEL SECURITY;
-ALTER TABLE tc_records    ENABLE ROW LEVEL SECURITY;
-ALTER TABLE user_profiles ENABLE ROW LEVEL SECURITY;
+-- If upgrading existing table, run:
+-- ALTER TABLE user_profiles ADD COLUMN IF NOT EXISTS username TEXT NOT NULL DEFAULT '';
+
+-- TC records migration (if upgrading):
+-- ALTER TABLE tc_records ADD COLUMN IF NOT EXISTS father_name VARCHAR(200);
+-- ALTER TABLE tc_records ADD COLUMN IF NOT EXISTS mother_name VARCHAR(200);
+-- ALTER TABLE tc_records ADD COLUMN IF NOT EXISTS guardian_name VARCHAR(200);
+-- ALTER TABLE tc_records ALTER COLUMN gender TYPE VARCHAR(20);
+
+-- Dropdown options master table
+CREATE TABLE IF NOT EXISTS dropdown_options (
+  id         SERIAL PRIMARY KEY,
+  category   VARCHAR(50) NOT NULL,
+  value      VARCHAR(200) NOT NULL,
+  parent     VARCHAR(200),
+  sort_order INTEGER NOT NULL DEFAULT 999,
+  created_at TIMESTAMP DEFAULT NOW(),
+  UNIQUE(category, value, parent)
+);
+
+CREATE INDEX IF NOT EXISTS idx_dropdown_category ON dropdown_options(category);
+CREATE INDEX IF NOT EXISTS idx_dropdown_parent   ON dropdown_options(parent);
+
+
+ALTER TABLE colleges         ENABLE ROW LEVEL SECURITY;
+ALTER TABLE tc_records       ENABLE ROW LEVEL SECURITY;
+ALTER TABLE user_profiles    ENABLE ROW LEVEL SECURITY;
+ALTER TABLE dropdown_options ENABLE ROW LEVEL SECURITY;
 
 -- Colleges & TC: accessible to authenticated users only
-CREATE POLICY "auth_colleges"   ON colleges   FOR ALL TO authenticated USING (true) WITH CHECK (true);
-CREATE POLICY "auth_tc_records" ON tc_records FOR ALL TO authenticated USING (true) WITH CHECK (true);
+CREATE POLICY "auth_colleges"   ON colleges         FOR ALL TO authenticated USING (true) WITH CHECK (true);
+CREATE POLICY "auth_tc_records" ON tc_records       FOR ALL TO authenticated USING (true) WITH CHECK (true);
+CREATE POLICY "auth_dropdowns"  ON dropdown_options FOR ALL TO authenticated USING (true) WITH CHECK (true);
 
 -- user_profiles: users can read their own; admins can read/write all
 CREATE POLICY "read_own_profile" ON user_profiles
@@ -72,8 +101,13 @@ CREATE POLICY "admin_all_profiles" ON user_profiles
 CREATE OR REPLACE FUNCTION handle_new_user()
 RETURNS TRIGGER AS $$
 BEGIN
-  INSERT INTO user_profiles (id, email, role)
-  VALUES (NEW.id, NEW.email, COALESCE(NEW.raw_user_meta_data->>'role', 'user'))
+  INSERT INTO user_profiles (id, email, username, role)
+  VALUES (
+    NEW.id,
+    NEW.email,
+    COALESCE(NEW.raw_user_meta_data->>'username', split_part(NEW.email, '@', 1)),
+    COALESCE(NEW.raw_user_meta_data->>'role', 'user')
+  )
   ON CONFLICT (id) DO NOTHING;
   RETURN NEW;
 END;
