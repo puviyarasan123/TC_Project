@@ -57,6 +57,18 @@ CREATE TABLE IF NOT EXISTS user_profiles (
 -- ALTER TABLE tc_records ADD COLUMN IF NOT EXISTS mother_name VARCHAR(200);
 -- ALTER TABLE tc_records ADD COLUMN IF NOT EXISTS guardian_name VARCHAR(200);
 -- ALTER TABLE tc_records ALTER COLUMN gender TYPE VARCHAR(20);
+-- ALTER TABLE tc_records ADD COLUMN IF NOT EXISTS download_count INTEGER NOT NULL DEFAULT 0;
+
+-- New table for re-download logs:
+-- CREATE TABLE IF NOT EXISTS tc_download_logs (
+--   id             SERIAL PRIMARY KEY,
+--   tc_id          INTEGER NOT NULL REFERENCES tc_records(id) ON DELETE CASCADE,
+--   download_count INTEGER NOT NULL,
+--   reason         TEXT,
+--   downloaded_at  TIMESTAMP DEFAULT NOW()
+-- );
+-- ALTER TABLE tc_download_logs ENABLE ROW LEVEL SECURITY;
+-- CREATE POLICY "auth_tc_download_logs" ON tc_download_logs FOR ALL TO authenticated USING (true) WITH CHECK (true);
 
 -- Dropdown options master table
 CREATE TABLE IF NOT EXISTS dropdown_options (

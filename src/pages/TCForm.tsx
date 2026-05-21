@@ -7,17 +7,24 @@ import CollegeSelector from '../components/CollegeSelector';
 import { getAllDropdowns, DropdownOption } from '../lib/dropdowns';
 import SearchableSelect from '../components/SearchableSelect';
 
-
-
 const initialState: TCFormData = {
   student_name: '', father_name: '', mother_name: '', guardian_name: '',
-  parent_name: '', gender: 'Male',
-  nationality: 'Indian', religion: '', community: '', caste: '',
+  parent_name: '', gender: '',
+  nationality: 'Indian', religion: 'Refer Community Certificate', community: 'Refer Community Certificate', caste: 'Refer Community Certificate',
   dob: '', dob_words: '', admission_date: '', study_period: '',
   leaving_date: '', class_at_leaving: '', medium: '',
-  promotion_status: '', application_date: '', reason: '',
+  promotion_status: 'Refer Mark Sheet', application_date: '', reason: '',
   conduct: '', id_number: '', college_id: 0,
 };
+
+type FormErrors = Partial<Record<keyof TCFormData | 'college', string>>;
+
+const required = new Set<keyof TCFormData>([
+  'student_name', 'father_name', 'mother_name', 'gender',
+  'dob', 'dob_words', 'admission_date', 'leaving_date',
+  'class_at_leaving', 'medium',
+  'application_date',
+]);
 
 const personalFields: FieldConfig[] = [
   { name: 'student_name',  label: 'Name of the Student (Block Letters)', full: true },
@@ -30,81 +37,120 @@ const personalFields: FieldConfig[] = [
 ];
 
 const academicFields: FieldConfig[] = [
-  { name: 'admission_date',   label: 'Date of Admission',                       type: 'date' },
+  { name: 'admission_date',   label: 'Date of Admission',                          type: 'date' },
   { name: 'study_period',     label: 'Period of Study' },
-  { name: 'leaving_date',     label: 'Date of Completion',                      type: 'date' },
-  { name: 'class_at_leaving', label: 'Degree at Time of Completion',            full: true },
+  { name: 'leaving_date',     label: 'Date of Completion',                         type: 'date' },
+  { name: 'class_at_leaving', label: 'Degree at Time of Completion',               full: true },
   { name: 'medium',           label: 'Medium of Instruction' },
-  { name: 'promotion_status', label: 'Qualified for Promotion to Higher Education' },
-  { name: 'application_date', label: 'Date of Application for T.C.',            type: 'date' },
-  { name: 'reason',           label: 'Reason for Applying T.C.',                full: true, textarea: true },
-  { name: 'conduct',          label: 'Conduct and Character' },
+  { name: 'promotion_status', label: 'Qualified for Promotion to Higher Education', disabled: true },
+  { name: 'application_date', label: 'Date of Application for T.C.',               type: 'date' },
+  { name: 'reason',           label: 'Reason for Applying T.C.',                   full: true, textarea: true },
+  { name: 'conduct',          label: 'Conduct and Character',  disabled: true },
 ];
 
+const errStyle: React.CSSProperties = { color: '#dc2626', fontSize: 11, marginTop: 2, display: 'block' };
+const redBorder: React.CSSProperties = { borderColor: '#dc2626' };
+const star = <span style={{ color: '#dc2626' }}> *</span>;
+
 const TCForm: React.FC = () => {
-  const [form, setForm] = useState<TCFormData>(initialState);
-  const [error, setError] = useState<string>('');
-  const [loading, setLoading] = useState<boolean>(false);
-  const [opts, setOpts] = useState<DropdownOption[]>([]);
+  const [form, setForm]           = useState<TCFormData>(initialState);
+  const [errors, setErrors]       = useState<FormErrors>({});
+  const [submitError, setSubmitError] = useState('');
+  const [loading, setLoading]     = useState(false);
+  const [opts, setOpts]           = useState<DropdownOption[]>([]);
   const { selected } = useCollege();
   const navigate = useNavigate();
 
   useEffect(() => { getAllDropdowns().then(setOpts).catch(() => {}); }, []);
+  useEffect(() => { if (selected) setErrors(p => { const n = { ...p }; delete n.college; return n; }); }, [selected]);
 
   const vals = (cat: string, parent?: string) =>
     opts.filter(o => o.category === cat && (parent === undefined || o.parent === parent)).map(o => o.value);
 
-  const handle = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>): void => {
+  const clearErr = (name: string) =>
+    setErrors(p => { const n = { ...p }; delete (n as any)[name]; return n; });
+
+  const handle = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
+    clearErr(name);
     setForm(prev => {
-      const updated = { ...prev, [name]: value };
-      if (name === 'religion')  { updated.community = ''; updated.caste = ''; }
-      if (name === 'community') { updated.caste = ''; }
-      return updated;
+      const u = { ...prev, [name]: value };
+      if (name === 'religion')  { u.community = ''; u.caste = ''; }
+      if (name === 'community') { u.caste = ''; }
+      return u;
     });
   };
 
-  const handleSelect = (name: string, value: string): void => {
+  const handleSelect = (name: string, value: string) => {
+    clearErr(name);
     setForm(prev => {
-      const updated = { ...prev, [name]: value };
-      if (name === 'religion')  { updated.community = ''; updated.caste = ''; }
-      if (name === 'community') { updated.caste = ''; }
-      return updated;
+      const u = { ...prev, [name]: value };
+      if (name === 'religion')  { u.community = ''; u.caste = ''; }
+      if (name === 'community') { u.caste = ''; }
+      return u;
     });
   };
 
-  const submit = async (e: FormEvent<HTMLFormElement>): Promise<void> => {
+  const validate = (): boolean => {
+    const e: FormErrors = {};
+    if (!selected) e.college = 'Please select a college.';
+    if (!form.student_name.trim())     e.student_name     = 'Student name is required.';
+    if (!form.father_name.trim())      e.father_name      = "Father's name is required.";
+    if (!form.mother_name.trim())      e.mother_name      = "Mother's name is required.";
+    if (!form.gender)                  e.gender           = 'Gender is required.';
+    if (!form.dob)                     e.dob              = 'Date of birth is required.';
+    if (!form.dob_words.trim())        e.dob_words        = 'Date of birth in words is required.';
+    if (!form.admission_date)          e.admission_date   = 'Admission date is required.';
+    if (!form.leaving_date)            e.leaving_date     = 'Date of completion is required.';
+    if (!form.class_at_leaving.trim()) e.class_at_leaving = 'Degree / class is required.';
+    if (!form.medium)                  e.medium           = 'Medium of instruction is required.';
+    if (!form.application_date)        e.application_date = 'Application date is required.';
+    setErrors(e);
+    return Object.keys(e).length === 0;
+  };
+
+  const submit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!selected)                  { setError('Please select a college first.');  return; }
-    if (!form.student_name.trim())  { setError('Student name is required.');        return; }
+    if (!validate()) return;
     setLoading(true);
-    setError('');
+    setSubmitError('');
     try {
-      const payload = { ...form, college_id: selected.id };
-      const rec = await createTC(payload);
+      const rec = await createTC({ ...form, college_id: selected!.id });
       navigate(`/preview/${rec.id}`);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Server error. Please try again.');
+      setSubmitError(err instanceof Error ? err.message : 'Server error. Please try again.');
     } finally {
       setLoading(false);
     }
   };
 
-  const renderField = (f: FieldConfig) => (
-    <div key={f.name} className={`form-group${f.full ? ' full' : ''}`}>
-      <label>{f.label}</label>
-      {f.textarea
-        ? <textarea name={f.name} value={form[f.name] as string} onChange={handle} />
-        : ['medium', 'promotion_status', 'conduct'].includes(f.name)
-          ? <SearchableSelect
-              name={f.name} value={form[f.name] as string}
-              options={vals(f.name)} placeholder="-- Select --"
-              onChange={handleSelect}
-            />
-          : <input type={f.type ?? 'text'} name={f.name} value={form[f.name] as string} onChange={handle} />
-      }
-    </div>
-  );
+  const fieldErr = (name: keyof TCFormData) =>
+    errors[name] ? <span style={errStyle}>{errors[name]}</span> : null;
+
+  const renderField = (f: FieldConfig) => {
+    const isReq = required.has(f.name as keyof TCFormData);
+    const hasErr = !!errors[f.name as keyof TCFormData];
+    return (
+      <div key={f.name} className={`form-group${f.full ? ' full' : ''}`}>
+        <label>{f.label}{isReq && star}</label>
+        {f.disabled
+          ? <input type="text" value={form[f.name] as string || ''} disabled />
+          : f.textarea
+            ? <textarea name={f.name} value={form[f.name] as string} onChange={handle}
+                style={hasErr ? redBorder : {}} />
+            : ['medium', 'promotion_status'].includes(f.name)
+              ? <SearchableSelect
+                  name={f.name} value={form[f.name] as string}
+                  options={vals(f.name)} placeholder="-- Select --"
+                  onChange={handleSelect}
+                />
+              : <input type={f.type ?? 'text'} name={f.name} value={form[f.name] as string}
+                  onChange={handle} style={hasErr ? redBorder : {}} />
+        }
+        {fieldErr(f.name as keyof TCFormData)}
+      </div>
+    );
+  };
 
   return (
     <div className="form-page">
@@ -113,15 +159,15 @@ const TCForm: React.FC = () => {
         <p>Select a college, fill in student details, and generate an official TC</p>
       </div>
 
-      {/* College selector — always visible at top */}
       <CollegeSelector />
+      {errors.college && <p className="error-msg">⚠ {errors.college}</p>}
 
       <div className="card">
         <div className="card-header">
           <div className="card-header-icon">📋</div>
           <div>
             <h3>Student Information</h3>
-            <p>All fields are printed on the certificate</p>
+            <p>Fields marked <span style={{ color: '#dc2626' }}>*</span> are required</p>
           </div>
         </div>
 
@@ -132,50 +178,39 @@ const TCForm: React.FC = () => {
               <div className="form-section-title">Personal Details</div>
 
               <div className="form-group">
-                <label>Gender</label>
-                <select name="gender" value={form.gender} onChange={handle}>
+                <label>Gender {star}</label>
+                <select name="gender" value={form.gender} onChange={handle}
+                  style={errors.gender ? redBorder : {}}>
+                  <option value="">-- Select --</option>
                   <option>Male</option>
                   <option>Female</option>
                   <option>Transgender</option>
                 </select>
+                {fieldErr('gender')}
               </div>
 
               <div className="form-group">
-                <label>Nationality</label>
+                <label>Nationality {star}</label>
                 <SearchableSelect
                   name="nationality" value={form.nationality}
                   options={vals('nationality')} onChange={handleSelect}
                 />
+                {fieldErr('nationality')}
               </div>
 
               <div className="form-group">
                 <label>Religion</label>
-                <SearchableSelect
-                  name="religion" value={form.religion}
-                  options={vals('religion')} placeholder="-- Select --" onChange={handleSelect}
-                />
+                <input type="text" value="Refer Community Certificate" readOnly />
               </div>
 
               <div className="form-group">
                 <label>Community</label>
-                <SearchableSelect
-                  name="community" value={form.community}
-                  options={vals('community', form.religion)}
-                  placeholder="-- Select --"
-                  disabled={!form.religion}
-                  onChange={handleSelect}
-                />
+                <input type="text" value="Refer Community Certificate" readOnly />
               </div>
 
               <div className="form-group">
                 <label>Caste</label>
-                <SearchableSelect
-                  name="caste" value={form.caste}
-                  options={vals('caste', form.community)}
-                  placeholder="-- Select --"
-                  disabled={!form.community}
-                  onChange={handleSelect}
-                />
+                <input type="text" value="Refer Community Certificate" readOnly />
               </div>
 
               {personalFields.map(renderField)}
@@ -186,9 +221,12 @@ const TCForm: React.FC = () => {
 
             </div>
 
-            {error && <p className="error-msg">⚠ {error}</p>}
+            {submitError && <p className="error-msg">⚠ {submitError}</p>}
+            {Object.keys(errors).length > 0 && !submitError && (
+              <p className="error-msg">⚠ Please fix the highlighted fields before submitting.</p>
+            )}
 
-            <button type="submit" className="submit-btn" disabled={loading || !selected}>
+            <button type="submit" className="submit-btn" disabled={loading}>
               {loading ? '⏳ Generating...' : '🎓 Generate Transfer Certificate'}
             </button>
           </form>

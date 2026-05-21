@@ -28,6 +28,7 @@ export interface TCRecord extends TCFormData {
   id: number;
   tc_number: string;
   created_at: string;
+  download_count: number;
 }
 
 export interface FieldConfig {
@@ -36,6 +37,15 @@ export interface FieldConfig {
   full?: boolean;
   textarea?: boolean;
   type?: string;
+  disabled?: boolean;
+}
+
+export interface TCDownloadLog {
+  id: number;
+  tc_id: number;
+  download_count: number;
+  reason: string;
+  downloaded_at: string;
 }
 
 export interface CollegeData {

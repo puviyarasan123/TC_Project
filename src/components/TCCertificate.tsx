@@ -28,16 +28,36 @@ const Row: React.FC<RowProps> = ({ num, label, children, value, tall }) => (
 interface TCCertificateProps {
   data: TCRecord;
   college?: CollegeData | null;
+  isDuplicate?: boolean;
 }
 
-const TCCertificate = forwardRef<HTMLDivElement, TCCertificateProps>(({ data, college }, ref) => {
+const communityReligion: Record<string, string> = {
+  'OC': 'Hindu', 'BC': 'Hindu', 'BC(M)': 'Muslim', 'MBC': 'Hindu', 'MBC(V)': 'Hindu',
+  'SC': 'Hindu', 'SC(A)': 'Hindu', 'ST': 'Hindu',
+  'BC(C)': 'Christian', 'SC(C)': 'Christian',
+};
+
+const TCCertificate = forwardRef<HTMLDivElement, TCCertificateProps>(({ data, college, isDuplicate }, ref) => {
   const collegeName = college?.name        ?? 'PALAR AGRICULTURAL COLLEGE';
   const trustName   = college?.trust_name  ?? 'A Unit of R.S Educational and Charitable Trust';
   const address     = college?.address     ?? 'Melpatti-635 805, Vellore (Dt), Tamil Nadu.';
   const logoUrl     = college?.logo_url    ?? '';
+  const religion    = communityReligion[data.community ?? ''] ?? data.religion ?? '';
 
   return (
     <div className="tc-cert" ref={ref}>
+
+      {/* Duplicate stamp */}
+      {isDuplicate && (
+        <div style={{
+          position: 'absolute', top: 12, right: 16,
+          border: '2.5px solid #c00', color: '#c00',
+          fontWeight: 700, fontSize: 13, letterSpacing: 2,
+          padding: '2px 10px', transform: 'rotate(0deg)',
+          opacity: 0.85, pointerEvents: 'none', zIndex: 10,
+          fontFamily: 'serif',
+        }}>DUPLICATE</div>
+      )}
 
       {/* Watermark */}
       <div className="watermark">
@@ -118,35 +138,37 @@ const TCCertificate = forwardRef<HTMLDivElement, TCCertificateProps>(({ data, co
           </div>
         </div>
 
-        {/* 3. Gender — selected bold/underlined, others faded */}
-        <Row num="3" label="Gender">
-          <div className="gender-row">
-            <span className={`gender-item${data.gender === 'Male' ? ' selected' : ''}`}>Male</span>
-            <span className="gender-dots">. </span>
-            <span className={`gender-item${data.gender === 'Female' ? ' selected' : ''}`}>Female</span>
-            <span className="gender-dots">.... </span>
-            <span className={`gender-item${data.gender === 'Transgender' ? ' selected' : ''}`}>Transgender</span>
-            <span className="gender-dots">.</span>
-          </div>
-        </Row>
+        {/* 3. Gender — only print the selected value */}
+        <Row num="3" label="Gender" value={data.gender} />
 
         {/* 4. Nationality and Religion */}
         <Row num="4" label="Nationality and Religion"
-          value={`${data.nationality ?? ''}${data.religion ? ' & ' + data.religion : ''}`} />
+          value="Indian & Refer Community Certificate" />
 
         {/* 5. Community */}
-        <Row num="5" label="Community" value={data.community} />
+        <Row num="5" label="Community" value="Refer Community Certificate" />
 
         {/* 6. Caste */}
-        <Row num="6" label="Caste" value={data.caste} />
+        <Row num="6" label="Caste" value="Refer Community Certificate" />
 
         {/* 7. Date of Birth */}
-        <Row num="7" label={<>Date of Birth as entered in the admission Register<span className="sub-label">(In figures and words)</span></>} tall>
-          <div className="dob-block">
-            <DotLine value={fmt(data.dob)} wide />
-            <DotLine value={data.dob_words} wide />
+        <div className="tc-row tall">
+          <div className="tc-num-col">7.</div>
+          <div className="tc-label-col">Date of Birth as entered in the admission Register (In figures and words)</div>
+          <div className="tc-colon-col">:</div>
+          <div className="tc-value-col">
+            <div className="parent-sub">
+              <div className="parent-sub-label">In Figures</div>
+              <div className="parent-sub-colon">:</div>
+              <div className="parent-sub-value"><DotLine value={fmt(data.dob)} wide /></div>
+            </div>
+            <div className="parent-sub">
+              <div className="parent-sub-label">In Words</div>
+              <div className="parent-sub-colon">:</div>
+              <div className="parent-sub-value"><DotLine value={data.dob_words} wide /></div>
+            </div>
           </div>
-        </Row>
+        </div>
 
         {/* 8. Date of Admission */}
         <Row num="8" label="Date of Admission" value={fmt(data.admission_date)} />
@@ -158,15 +180,15 @@ const TCCertificate = forwardRef<HTMLDivElement, TCCertificateProps>(({ data, co
         <Row num="10" label="Date of Completion" value={fmt(data.leaving_date)} />
 
         {/* 11. Degree in which the student was studying at the time of completion — from docx */}
-        <Row num="11" label={<>Degree in which the student was studying<span className="sub-label">at the time of completion</span></>} tall
+        <Row num="11" label="Degree in which the student was studying at the time of completion"
           value={data.class_at_leaving} />
 
         {/* 12. Medium of Instruction */}
         <Row num="12" label="Medium of Instruction" value={data.medium} />
 
         {/* 13. Whether qualified for promotion */}
-        <Row num="13" label={<>Whether qualified for promotion to<span className="sub-label">higher education</span></>} tall
-          value={data.promotion_status} />
+        <Row num="13" label="Whether qualified for promotion to higher education"
+          value="Refer Mark Sheet" />
 
         {/* 14. Date of application for T.C */}
         <Row num="14" label="Date of application for T.C" value={fmt(data.application_date)} />
@@ -175,7 +197,7 @@ const TCCertificate = forwardRef<HTMLDivElement, TCCertificateProps>(({ data, co
         <Row num="15" label="Reason for applying for the T.C" value={data.reason} />
 
         {/* 16. Conduct and Character */}
-        <Row num="16" label="Conduct and Character" value={data.conduct} />
+        <Row num="16" label="Conduct and Character" value="" />
 
       </div>
 
