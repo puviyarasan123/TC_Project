@@ -112,7 +112,7 @@ const TCCertificate = forwardRef<HTMLDivElement, TCCertificateProps>(({ data, co
       <div className="tc-body">
 
         {/* 1. Name of the student */}
-        <Row num="1" label="Name of the student (In block letters)" value={data.student_name?.toUpperCase()} />
+        <Row num="1" label="Name of the Student (In block letters)" value={data.student_name?.toUpperCase()} />
 
         {/* 2. Name of the Parents — Father / Mother / Guardian sub-rows */}
         <div className="tc-row tall">

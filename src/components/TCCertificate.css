@@ -185,39 +185,39 @@
 .tc-row {
   display: flex;
   align-items: center;
-  min-height: 58px;
-  font-size: 18px;
-  line-height: 2.4;
+  min-height: 60px;
+  font-size: 20px;
+  line-height: 2.2;
   padding: 3px 0;
 }
-.tc-row.tall { min-height: 116px; align-items: flex-start; }
+.tc-row.tall { min-height: 120px; align-items: flex-start; }
 
 .tc-num-col {
   width: 36px;
   flex-shrink: 0;
-  font-size: 18px;
-  line-height: 2.4;
+  font-size: 20px;
+  line-height: 2.2;
   align-self: center;
 }
 .tc-label-col {
-  width: 310px;
+  width: 340px;
   flex-shrink: 0;
-  font-size: 18px;
+  font-size: 20px;
   line-height: 1.45;
   align-self: center;
 }
 .tc-colon-col {
-  width: 16px;
+  width: 20px;
   flex-shrink: 0;
-  font-size: 18px;
-  line-height: 2.4;
+  font-size: 20px;
+  line-height: 2.2;
   text-align: center;
   align-self: center;
 }
 .tc-value-col {
   flex: 1;
-  font-size: 18px;
-  line-height: 2.4;
+  font-size: 20px;
+  line-height: 2.2;
   min-width: 0;
   align-self: center;
 }
@@ -228,14 +228,14 @@
 .dot-line {
   display: inline-block;
   min-width: 80px;
-  font-size: 18px;
+  font-size: 20px;
   vertical-align: middle;
-  line-height: 2.4;
+  line-height: 2.2;
 }
 .dot-line.wide {
   width: 100%;
   display: block;
-  line-height: 2.4;
+  line-height: 2.2;
 }
 .dot-line.short  { min-width: 110px; }
 .dot-line.medium { min-width: 160px; }
@@ -267,25 +267,25 @@
 .parent-sub {
   display: flex;
   align-items: center;
-  font-size: 18px;
-  line-height: 2.4;
-  min-height: 56px;
+  font-size: 20px;
+  line-height: 2.2;
+  min-height: 58px;
 }
 .parent-sub-label {
-  width: 180px;
+  width: 200px;
   flex-shrink: 0;
-  font-size: 18px;
-  line-height: 2.4;
+  font-size: 20px;
+  line-height: 2.2;
 }
 .parent-sub-colon {
-  width: 16px;
+  width: 20px;
   flex-shrink: 0;
   text-align: center;
-  line-height: 2.4;
+  line-height: 2.2;
 }
 .parent-sub-value {
   flex: 1;
-  line-height: 2.4;
+  line-height: 2.2;
 }
 
 /* ── DOB block ── */
@@ -300,27 +300,27 @@
   display: flex;
   justify-content: space-between;
   align-items: flex-end;
-  margin-top: 28px;
+  margin-top: 48px;
   position: relative;
   z-index: 1;
-  font-size: 16px;
+  font-size: 20px;
 }
 .footer-left {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 40px;
 }
 .footer-right {
   text-align: left;
-  margin-right: 60px;
+  margin-right: 140px;
   margin-bottom: 8px;
 }
 .principal-label {
   font-size: 18px;
   font-weight: bold;
   letter-spacing: 1px;
-  margin-top: 56px;
-  margin-left: -38px;
+  margin-top: 80px;
+  margin-left: -70px;
 }
 
 @media print {
