@@ -190,7 +190,7 @@
   line-height: 2.2;
   padding: 3px 0;
 }
-.tc-row.tall { min-height: 120px; align-items: flex-start; }
+.tc-row.tall { min-height: 120px; align-items: flex-start; padding-top: 0; }
 
 .tc-num-col {
   width: 36px;
@@ -272,15 +272,15 @@
   min-height: 58px;
 }
 .parent-sub-label {
-  width: 200px;
+  width: 220px;
   flex-shrink: 0;
   font-size: 20px;
   line-height: 2.2;
 }
 .parent-sub-colon {
-  width: 20px;
+  width: 24px;
   flex-shrink: 0;
-  text-align: center;
+  text-align: left;
   line-height: 2.2;
 }
 .parent-sub-value {
@@ -300,7 +300,8 @@
   display: flex;
   justify-content: space-between;
   align-items: flex-end;
-  margin-top: 48px;
+  margin-top: 60px;
+  margin-bottom: 40px;
   position: relative;
   z-index: 1;
   font-size: 20px;
@@ -309,18 +310,21 @@
   display: flex;
   flex-direction: column;
   gap: 40px;
+  padding-top: 20px;
+  padding-bottom: 20px;
 }
 .footer-right {
-  text-align: left;
-  margin-right: 140px;
-  margin-bottom: 8px;
+  text-align: center;
+  margin-right: 60px;
+  margin-bottom: 20px;
+  padding-bottom: 20px;
 }
 .principal-label {
   font-size: 18px;
   font-weight: bold;
   letter-spacing: 1px;
-  margin-top: 80px;
-  margin-left: -70px;
+  margin-top: 100px;
+  margin-left: 0;
 }
 
 @media print {

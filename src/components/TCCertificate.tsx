@@ -114,26 +114,36 @@ const TCCertificate = forwardRef<HTMLDivElement, TCCertificateProps>(({ data, co
         {/* 1. Name of the student */}
         <Row num="1" label="Name of the Student (In block letters)" value={data.student_name?.toUpperCase()} />
 
-        {/* 2. Name of the Parents — Father / Mother / Guardian sub-rows */}
+        {/* 2. Name of the Parents */}
         <div className="tc-row tall">
-          <div className="tc-num-col">2.</div>
-          <div className="tc-label-col">Name of the Parents</div>
-          <div className="tc-colon-col">:</div>
-          <div className="tc-value-col">
-            <div className="parent-sub">
-              <div className="parent-sub-label">Father's Name</div>
-              <div className="parent-sub-colon">:</div>
-              <div className="parent-sub-value"><DotLine value={data.father_name} wide /></div>
+          <div className="tc-num-col" style={{alignSelf:'flex-start',paddingTop:8}}>2.</div>
+          <div style={{flex:1, display:'flex', flexDirection:'column', fontSize:20}}>
+            <div style={{display:'flex', alignItems:'center', minHeight:58}}>
+              <div className="tc-label-col" style={{alignSelf:'center'}}>Name of the Parents</div>
+              <div className="tc-colon-col" style={{alignSelf:'center'}}>:</div>
+              <div style={{flex:1, display:'flex', alignItems:'center'}}>
+                <span style={{width:220, flexShrink:0}}>Father's Name</span>
+                <span style={{width:20, flexShrink:0, textAlign:'center'}}>:</span>
+                <DotLine value={data.father_name} wide />
+              </div>
             </div>
-            <div className="parent-sub">
-              <div className="parent-sub-label">Mother's Name</div>
-              <div className="parent-sub-colon">:</div>
-              <div className="parent-sub-value"><DotLine value={data.mother_name} wide /></div>
+            <div style={{display:'flex', alignItems:'center', minHeight:58}}>
+              <div className="tc-label-col"></div>
+              <div className="tc-colon-col">:</div>
+              <div style={{flex:1, display:'flex', alignItems:'center'}}>
+                <span style={{width:220, flexShrink:0}}>Mother's Name</span>
+                <span style={{width:20, flexShrink:0, textAlign:'center'}}>:</span>
+                <DotLine value={data.mother_name} wide />
+              </div>
             </div>
-            <div className="parent-sub">
-              <div className="parent-sub-label">Guardian Name</div>
-              <div className="parent-sub-colon">:</div>
-              <div className="parent-sub-value"><DotLine value={data.guardian_name} wide /></div>
+            <div style={{display:'flex', alignItems:'center', minHeight:58}}>
+              <div className="tc-label-col"></div>
+              <div className="tc-colon-col">:</div>
+              <div style={{flex:1, display:'flex', alignItems:'center'}}>
+                <span style={{width:220, flexShrink:0}}>Guardian Name</span>
+                <span style={{width:20, flexShrink:0, textAlign:'center'}}>:</span>
+                <DotLine value={data.guardian_name} wide />
+              </div>
             </div>
           </div>
         </div>
@@ -152,20 +162,26 @@ const TCCertificate = forwardRef<HTMLDivElement, TCCertificateProps>(({ data, co
         <Row num="6" label="Caste" value="Refer Community Certificate" />
 
         {/* 7. Date of Birth */}
-        <div className="tc-row tall">
-          <div className="tc-num-col">7.</div>
-          <div className="tc-label-col">Date of Birth as entered in the admission Register (In figures and words)</div>
-          <div className="tc-colon-col">:</div>
-          <div className="tc-value-col">
-            <div className="parent-sub">
-              <div className="parent-sub-label">In Figures</div>
-              <div className="parent-sub-colon">:</div>
-              <div className="parent-sub-value"><DotLine value={fmt(data.dob)} wide /></div>
+        <div className="tc-row tall"style={{alignSelf:'flex-start',paddingTop:28}}>
+          <div className="tc-num-col" style={{alignSelf:'flex-start',paddingBottom:35}}>7.</div>
+          <div style={{flex:1, display:'flex', flexDirection:'column', fontSize:20}}>
+            <div style={{display:'flex', alignItems:'start', minHeight:58}}>
+              <div className="tc-label-col" style={{lineHeight:'1.4', alignSelf:'start'}}>Date of Birth as entered in the admission Register (In figures and words)</div>
+              <div className="tc-colon-col" style={{alignSelf:'start'}}>:</div>
+              <div style={{flex:1, display:'flex', alignItems:'center'}}>
+                <span style={{width:220, flexShrink:0}}>In Figures</span>
+                <span style={{width:20, flexShrink:0, textAlign:'center'}}>:</span>
+                <DotLine value={fmt(data.dob)} wide />
+              </div>
             </div>
-            <div className="parent-sub">
-              <div className="parent-sub-label">In Words</div>
-              <div className="parent-sub-colon">:</div>
-              <div className="parent-sub-value"><DotLine value={data.dob_words} wide /></div>
+            <div style={{display:'flex', alignItems:'start', minHeight:58}}>
+              <div className="tc-label-col"></div>
+              <div className="tc-colon-col"style={{alignSelf:'flex-start',paddingBottom:28}}>:</div>
+              <div style={{flex:1, display:'flex', alignItems:'start'}}>
+                <span style={{width:220, flexShrink:0}}>In Words</span>
+                <span style={{width:20, flexShrink:0, textAlign:'center'}}>:</span>
+                <DotLine value={data.dob_words} wide />
+              </div>
             </div>
           </div>
         </div>
