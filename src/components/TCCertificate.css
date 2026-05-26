@@ -4,7 +4,7 @@
   min-height: 420mm;
   background: #fff;
   font-family: 'Times New Roman', Times, serif;
-  padding: 24mm 24mm 26mm 22mm;
+  padding: 1mm 2mm 2mm 2mm;
   position: relative;
   box-sizing: border-box;
   color: #000;
@@ -50,7 +50,7 @@
 .tc-header {
   display: flex;
   align-items: center;
-  margin-bottom: 4mm;
+  margin-bottom: 2mm;
   position: relative;
   z-index: 1;
 }
@@ -99,7 +99,7 @@
    Address       szCs=24 → 12pt → 16px
 */
 .college-name {
-  font-size: 20px;
+  font-size: 26px;
   font-weight: bold;
   letter-spacing: 0.4px;
   line-height: 1.25;
@@ -107,14 +107,14 @@
   color: #000;
 }
 .college-trust {
-  font-size: 16px;
+  font-size: 19px;
   font-style: italic;
   font-weight: normal;
   line-height: 1.4;
   color: #000;
 }
 .college-accred {
-  font-size: 13px;
+  font-size: 16px;
   font-style: italic;
   line-height: 1.4;
   color: #000;
@@ -124,7 +124,7 @@
   font-style: italic;
 }
 .college-affil {
-  font-size: 13px;
+  font-size: 16px;
   line-height: 1.4;
   color: #000;
 }
@@ -133,7 +133,7 @@
   font-style: italic;
 }
 .college-addr {
-  font-size: 16px;
+  font-size: 19px;
   line-height: 1.4;
   color: #000;
 }
@@ -142,7 +142,7 @@
 .tc-divider {
   border: none;
   border-top: 1.5px solid #000;
-  margin: 16px 20px 18px 19px;
+  margin: 8px 20px 10px 19px;
   position: relative;
   z-index: 1;
 }
@@ -150,15 +150,15 @@
 /* ── Title: TRANSFER CERTIFICATE ── */
 .tc-title-bar {
   text-align: center;
-  margin: 14px 0 16px 0;
+  margin: 6px 0 8px 0;
   position: relative;
   z-index: 1;
 }
 .tc-title-bar span {
   display: inline-block;
-  font-size: 18px;
+  font-size: 22px;
   font-weight: bold;
-  text-decoration: underline;
+  text-decoration: none;
   letter-spacing: 2px;
   color: #000;
 }
@@ -328,6 +328,6 @@
     width: 297mm;
     min-height: 420mm;
     margin: 0;
-    padding: 14mm 22mm 16mm 22mm;
+    padding: 6mm 22mm 16mm 22mm;
   }
 }
