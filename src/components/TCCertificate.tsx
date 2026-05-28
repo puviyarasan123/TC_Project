@@ -103,44 +103,46 @@ const TCCertificate = forwardRef<HTMLDivElement, TCCertificateProps>(({ data, co
       <div className="tc-title-bar"><span>TRANSFER CERTIFICATE</span></div>
 
       {/* TC No / ID No */}
-      <div className="tc-top-row">
+      <div className="tc-top-row" style={{marginLeft: 34}} >
         <div>T.C.No.: {data.tc_number}</div>
         <div>ID No: <span className="dot-line short">{data.id_number ?? ''}</span></div>
       </div>
 
       {/* Body */}
-      <div className="tc-body">
+      <div className="tc-body"style={{marginLeft: 34}} >
 
         {/* 1. Name of the student */}
-        <Row num="1" label="Name of the Student (In block letters)" value={data.student_name?.toUpperCase()} />
+        <Row num="1" label="Name of the Student (In block letters)">
+          <span style={{fontWeight:'bold'}}>{data.student_name?.toUpperCase()}</span>
+        </Row>
 
         {/* 2. Name of the Parents */}
-        <div className="tc-row tall">
-          <div className="tc-num-col" style={{alignSelf:'flex-start',paddingTop:8}}>2.</div>
-          <div style={{flex:1, display:'flex', flexDirection:'column', fontSize:20}}>
-            <div style={{display:'flex', alignItems:'center', minHeight:58}}>
-              <div className="tc-label-col" style={{alignSelf:'center'}}>Name of the Parents</div>
-              <div className="tc-colon-col" style={{alignSelf:'center'}}>:</div>
+        <div className="tc-row tall-3">
+          <div className="tc-num-col" style={{alignSelf:'flex-start',paddingTop:4}}>2.</div>
+          <div style={{flex:1, display:'flex', flexDirection:'column'}}>
+            <div style={{display:'flex', alignItems:'center', minHeight:40}}>
+              <div className="tc-label-col">Name of the Parents</div>
+              <div className="tc-colon-col">:</div>
               <div style={{flex:1, display:'flex', alignItems:'center'}}>
-                <span style={{width:220, flexShrink:0}}>Father's Name</span>
+                <span style={{width:140, flexShrink:0}}>Father's Name</span>
                 <span style={{width:20, flexShrink:0, textAlign:'center'}}>:</span>
                 <DotLine value={data.father_name} wide />
               </div>
             </div>
-            <div style={{display:'flex', alignItems:'center', minHeight:58}}>
+            <div style={{display:'flex', alignItems:'center', minHeight:40}}>
               <div className="tc-label-col"></div>
               <div className="tc-colon-col">:</div>
               <div style={{flex:1, display:'flex', alignItems:'center'}}>
-                <span style={{width:220, flexShrink:0}}>Mother's Name</span>
+                <span style={{width:140, flexShrink:0}}>Mother's Name</span>
                 <span style={{width:20, flexShrink:0, textAlign:'center'}}>:</span>
                 <DotLine value={data.mother_name} wide />
               </div>
             </div>
-            <div style={{display:'flex', alignItems:'center', minHeight:58}}>
+            <div style={{display:'flex', alignItems:'center', minHeight:40}}>
               <div className="tc-label-col"></div>
               <div className="tc-colon-col">:</div>
               <div style={{flex:1, display:'flex', alignItems:'center'}}>
-                <span style={{width:220, flexShrink:0}}>Guardian Name</span>
+                <span style={{width:140, flexShrink:0}}>Guardian Name</span>
                 <span style={{width:20, flexShrink:0, textAlign:'center'}}>:</span>
                 <DotLine value={data.guardian_name} wide />
               </div>
@@ -162,23 +164,23 @@ const TCCertificate = forwardRef<HTMLDivElement, TCCertificateProps>(({ data, co
         <Row num="6" label="Caste" value="Refer Community Certificate" />
 
         {/* 7. Date of Birth */}
-        <div className="tc-row tall"style={{alignSelf:'flex-start',paddingTop:28}}>
-          <div className="tc-num-col" style={{alignSelf:'flex-start',paddingBottom:35}}>7.</div>
-          <div style={{flex:1, display:'flex', flexDirection:'column', fontSize:20}}>
-            <div style={{display:'flex', alignItems:'start', minHeight:58}}>
-              <div className="tc-label-col" style={{lineHeight:'1.4', alignSelf:'start'}}>Date of Birth as entered in the admission Register (In figures and words)</div>
-              <div className="tc-colon-col" style={{alignSelf:'start'}}>:</div>
+        <div className="tc-row tall-2">
+          <div className="tc-num-col" style={{alignSelf:'flex-start',paddingTop:4}}>7.</div>
+          <div style={{flex:1, display:'flex', flexDirection:'column'}}>
+            <div style={{display:'flex', alignItems:'center', minHeight:40}}>
+              <div className="tc-label-col" style={{lineHeight:'1.4'}}>Date of Birth as entered in the admission Register (In figures and words)</div>
+              <div className="tc-colon-col">:</div>
               <div style={{flex:1, display:'flex', alignItems:'center'}}>
-                <span style={{width:220, flexShrink:0}}>In Figures</span>
+                <span style={{width:140, flexShrink:0}}>In Figures</span>
                 <span style={{width:20, flexShrink:0, textAlign:'center'}}>:</span>
                 <DotLine value={fmt(data.dob)} wide />
               </div>
             </div>
-            <div style={{display:'flex', alignItems:'start', minHeight:58}}>
+            <div style={{display:'flex', alignItems:'center', minHeight:40}}>
               <div className="tc-label-col"></div>
-              <div className="tc-colon-col"style={{alignSelf:'flex-start',paddingBottom:28}}>:</div>
-              <div style={{flex:1, display:'flex', alignItems:'start'}}>
-                <span style={{width:220, flexShrink:0}}>In Words</span>
+              <div className="tc-colon-col">:</div>
+              <div style={{flex:1, display:'flex', alignItems:'center'}}>
+                <span style={{width:140, flexShrink:0}}>In Words</span>
                 <span style={{width:20, flexShrink:0, textAlign:'center'}}>:</span>
                 <DotLine value={data.dob_words} wide />
               </div>
@@ -218,7 +220,7 @@ const TCCertificate = forwardRef<HTMLDivElement, TCCertificateProps>(({ data, co
       </div>
 
       {/* Footer */}
-      <div className="tc-footer">
+      <div className="tc-footer" style={{marginLeft: 34}} >
         <div className="footer-left">
           <div>Place: <span className="dot-line medium" /></div>
           <div>Date: <span className="dot-line medium" /></div>
