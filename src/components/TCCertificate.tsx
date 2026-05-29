@@ -42,7 +42,10 @@ const TCCertificate = forwardRef<HTMLDivElement, TCCertificateProps>(({ data, co
   const trustName   = college?.trust_name  ?? 'A Unit of R.S Educational and Charitable Trust';
   const address     = college?.address     ?? 'Melpatti-635 805, Vellore (Dt), Tamil Nadu.';
   const logoUrl     = college?.logo_url    ?? '';
-  const religion    = communityReligion[data.community ?? ''] ?? data.religion ?? '';
+  const abbr        = collegeName.split(' ').map((w: string) => w[0]).join('').toUpperCase();
+  const tcYear      = data.tc_number ? data.tc_number.split('/')[1] : '';
+  const titlePrefix = `${abbr}/TC/${tcYear}`;
+  const fullTCNum   = data.tc_number ?? '';
 
   return (
     <div className="tc-cert" ref={ref}>
@@ -100,11 +103,14 @@ const TCCertificate = forwardRef<HTMLDivElement, TCCertificateProps>(({ data, co
       <hr className="tc-divider" />
 
       {/* Title */}
-      <div className="tc-title-bar"><span>TRANSFER CERTIFICATE</span></div>
+      <div className="tc-title-bar">
+        <span className="tc-title-prefix">{titlePrefix}</span>
+        <span className="tc-title-text">TRANSFER CERTIFICATE</span>
+      </div>
 
       {/* TC No / ID No */}
       <div className="tc-top-row" style={{marginLeft: 34}} >
-        <div>T.C.No.: {data.tc_number}</div>
+        <div>T.C.No.: {fullTCNum}</div>
         <div>ID No: <span className="dot-line short">{data.id_number ?? ''}</span></div>
       </div>
 
@@ -116,77 +122,29 @@ const TCCertificate = forwardRef<HTMLDivElement, TCCertificateProps>(({ data, co
           <span style={{fontWeight:'bold'}}>{data.student_name?.toUpperCase()}</span>
         </Row>
 
-        {/* 2. Name of the Parents */}
-        <div className="tc-row tall-3">
-          <div className="tc-num-col" style={{alignSelf:'flex-start',paddingTop:4}}>2.</div>
-          <div style={{flex:1, display:'flex', flexDirection:'column'}}>
-            <div style={{display:'flex', alignItems:'center', minHeight:40}}>
-              <div className="tc-label-col">Name of the Parents</div>
-              <div className="tc-colon-col">:</div>
-              <div style={{flex:1, display:'flex', alignItems:'center'}}>
-                <span style={{width:140, flexShrink:0}}>Father's Name</span>
-                <span style={{width:20, flexShrink:0, textAlign:'center'}}>:</span>
-                <DotLine value={data.father_name} wide />
-              </div>
-            </div>
-            <div style={{display:'flex', alignItems:'center', minHeight:40}}>
-              <div className="tc-label-col"></div>
-              <div className="tc-colon-col">:</div>
-              <div style={{flex:1, display:'flex', alignItems:'center'}}>
-                <span style={{width:140, flexShrink:0}}>Mother's Name</span>
-                <span style={{width:20, flexShrink:0, textAlign:'center'}}>:</span>
-                <DotLine value={data.mother_name} wide />
-              </div>
-            </div>
-            <div style={{display:'flex', alignItems:'center', minHeight:40}}>
-              <div className="tc-label-col"></div>
-              <div className="tc-colon-col">:</div>
-              <div style={{flex:1, display:'flex', alignItems:'center'}}>
-                <span style={{width:140, flexShrink:0}}>Guardian Name</span>
-                <span style={{width:20, flexShrink:0, textAlign:'center'}}>:</span>
-                <DotLine value={data.guardian_name} wide />
-              </div>
-            </div>
-          </div>
-        </div>
+        {/* 2. Father's Name */}
+        <Row num="2" label="Father's Name" value={data.father_name} />
 
-        {/* 3. Gender — only print the selected value */}
-        <Row num="3" label="Gender" value={data.gender} />
+        {/* 3. Mother's Name / Guardian Name */}
+        <Row num="3" label="Mother's Name / Guardian Name" value={data.mother_name || data.guardian_name} />
 
-        {/* 4. Nationality and Religion */}
-        <Row num="4" label="Nationality and Religion"
+        {/* 4. Gender */}
+        <Row num="4" label="Gender" value={data.gender} />
+
+        {/* 5. Nationality and Religion */}
+        <Row num="5" label="Nationality and Religion"
           value="Indian & Refer Community Certificate" />
 
-        {/* 5. Community */}
-        <Row num="5" label="Community" value="Refer Community Certificate" />
-
-        {/* 6. Caste */}
-        <Row num="6" label="Caste" value="Refer Community Certificate" />
+        {/* 6. Community & Caste */}
+        <Row num="6" label="Community & Caste" value="Refer Community Certificate" />
 
         {/* 7. Date of Birth */}
-        <div className="tc-row tall-2">
-          <div className="tc-num-col" style={{alignSelf:'flex-start',paddingTop:4}}>7.</div>
-          <div style={{flex:1, display:'flex', flexDirection:'column'}}>
-            <div style={{display:'flex', alignItems:'center', minHeight:40}}>
-              <div className="tc-label-col" style={{lineHeight:'1.4'}}>Date of Birth as entered in the admission Register (In figures and words)</div>
-              <div className="tc-colon-col">:</div>
-              <div style={{flex:1, display:'flex', alignItems:'center'}}>
-                <span style={{width:140, flexShrink:0}}>In Figures</span>
-                <span style={{width:20, flexShrink:0, textAlign:'center'}}>:</span>
-                <DotLine value={fmt(data.dob)} wide />
-              </div>
-            </div>
-            <div style={{display:'flex', alignItems:'center', minHeight:40}}>
-              <div className="tc-label-col"></div>
-              <div className="tc-colon-col">:</div>
-              <div style={{flex:1, display:'flex', alignItems:'center'}}>
-                <span style={{width:140, flexShrink:0}}>In Words</span>
-                <span style={{width:20, flexShrink:0, textAlign:'center'}}>:</span>
-                <DotLine value={data.dob_words} wide />
-              </div>
-            </div>
+        <Row num="7" label="Date of Birth as entered in the admission Register (In figures and words)" tall>
+          <div>
+            <div><DotLine value={fmt(data.dob)} wide /></div>
+            <div><DotLine value={data.dob_words} wide /></div>
           </div>
-        </div>
+        </Row>
 
         {/* 8. Date of Admission */}
         <Row num="8" label="Date of Admission" value={fmt(data.admission_date)} />
@@ -194,10 +152,10 @@ const TCCertificate = forwardRef<HTMLDivElement, TCCertificateProps>(({ data, co
         {/* 9. Period of Study */}
         <Row num="9" label="Period of Study" value={data.study_period} />
 
-        {/* 10. Date of Completion — from docx */}
+        {/* 10. Date of Completion */}
         <Row num="10" label="Date of Completion" value={fmt(data.leaving_date)} />
 
-        {/* 11. Degree in which the student was studying at the time of completion — from docx */}
+        {/* 11. Degree in which the student was studying at the time of completion */}
         <Row num="11" label="Degree in which the student was studying at the time of completion"
           value={data.class_at_leaving} />
 
