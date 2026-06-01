@@ -43,9 +43,7 @@ const TCCertificate = forwardRef<HTMLDivElement, TCCertificateProps>(({ data, co
   const address     = college?.address     ?? 'Melpatti-635 805, Vellore (Dt), Tamil Nadu.';
   const logoUrl     = college?.logo_url    ?? '';
   const abbr        = collegeName.split(' ').map((w: string) => w[0]).join('').toUpperCase();
-  const tcYear      = data.tc_number ? data.tc_number.split('/')[1] : '';
-  const titlePrefix = `${abbr}/TC/${tcYear}`;
-  const fullTCNum   = data.tc_number ?? '';
+  const fullTCNum   = data.tc_number ? `${abbr}/${data.tc_number}` : '';
 
   return (
     <div className="tc-cert" ref={ref}>
@@ -104,14 +102,19 @@ const TCCertificate = forwardRef<HTMLDivElement, TCCertificateProps>(({ data, co
 
       {/* Title */}
       <div className="tc-title-bar">
-        <span className="tc-title-prefix">{titlePrefix}</span>
         <span className="tc-title-text">TRANSFER CERTIFICATE</span>
       </div>
 
       {/* TC No / ID No */}
-      <div className="tc-top-row" style={{marginLeft: 34}} >
-        <div>T.C.No.: {fullTCNum}</div>
-        <div>ID No: <span className="dot-line short">{data.id_number ?? ''}</span></div>
+      <div className="tc-top-row" style={{marginLeft: 34}}>
+        <div style={{display:'flex', alignItems:'center', gap: 4}}>
+          <span>T.C.No.:</span>
+          <span>{fullTCNum}</span>
+        </div>
+        <div style={{display:'flex', alignItems:'center', gap: 4}}>
+          <span>ID No:</span>
+          <span>{data.id_number ?? ''}</span>
+        </div>
       </div>
 
       {/* Body */}
@@ -139,11 +142,8 @@ const TCCertificate = forwardRef<HTMLDivElement, TCCertificateProps>(({ data, co
         <Row num="6" label="Community & Caste" value="Refer Community Certificate" />
 
         {/* 7. Date of Birth */}
-        <Row num="7" label="Date of Birth as entered in the admission Register (In figures and words)" tall>
-          <div>
-            <div><DotLine value={fmt(data.dob)} wide /></div>
-            <div><DotLine value={data.dob_words} wide /></div>
-          </div>
+        <Row num="7" label="Date of Birth as entered in the admission Register (In figures and words)">
+          <span>{fmt(data.dob)} &amp; {data.dob_words}</span>
         </Row>
 
         {/* 8. Date of Admission */}

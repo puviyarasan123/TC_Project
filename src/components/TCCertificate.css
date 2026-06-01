@@ -157,19 +157,10 @@
   position: relative;
   z-index: 1;
 }
-.tc-title-prefix {
-  font-size: 28px;
-  font-weight: bold;
-  margin-right: 8px;
-  white-space: nowrap;
-  color: #000;
-}
 .tc-title-text {
   font-size: 28px;
   font-weight: bold;
   letter-spacing: 2px;
-  text-decoration: underline;
-  text-underline-offset: 4px;
   color: #000;
 }
 
@@ -177,7 +168,7 @@
 .tc-top-row {
   display: flex;
   justify-content: space-between;
-  font-size: 22px;
+  font-size: 26px;
   font-weight: bold;
   margin-bottom: 6px;
   position: relative;
@@ -195,8 +186,8 @@
 .tc-row {
   display: flex;
   align-items: center;
-  min-height: 64px;
-  font-size: 24px;
+  min-height: 68px;
+  font-size: 26px;
   line-height: 2.2;
   padding: 3px 0;
 }
@@ -205,30 +196,30 @@
 .tc-row.tall-2 { min-height: 0; align-items: flex-start; padding-top: 0; line-height: 1.8; }
 
 .tc-num-col {
-  width: 40px;
+  width: 44px;
   flex-shrink: 0;
-  font-size: 24px;
+  font-size: 26px;
   line-height: 2.2;
   align-self: center;
 }
 .tc-label-col {
-  width: 420px;
+  width: 460px;
   flex-shrink: 0;
-  font-size: 24px;
+  font-size: 26px;
   line-height: 1.45;
   align-self: center;
 }
 .tc-colon-col {
-  width: 24px;
+  width: 28px;
   flex-shrink: 0;
-  font-size: 24px;
+  font-size: 26px;
   line-height: 2.2;
   text-align: center;
   align-self: center;
 }
 .tc-value-col {
   flex: 1;
-  font-size: 24px;
+  font-size: 26px;
   line-height: 2.2;
   min-width: 0;
   align-self: center;
@@ -240,7 +231,7 @@
 .dot-line {
   display: inline-block;
   min-width: 80px;
-  font-size: 24px;
+  font-size: 26px;
   vertical-align: middle;
   line-height: 2.2;
 }
@@ -316,7 +307,7 @@
   margin-bottom: 40px;
   position: relative;
   z-index: 1;
-  font-size: 24px;
+  font-size: 28px;
 }
 .footer-left {
   display: flex;
@@ -332,7 +323,7 @@
   padding-bottom: 20px;
 }
 .principal-label {
-  font-size: 24px;
+  font-size: 28px;
   font-weight: bold;
   letter-spacing: 1px;
   margin-top: 100px;
